@@ -1,9 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Sign up success | Task Rabbit {% endblock %}
+{% block title %}
+    <title>
+        Sign up success | Task Rabbit 
+    </title> 
+{% endblock %}
 {% block content %}
- <h1>Welcome {{ user.first_name }}!</h1>
- <p>
- Your account has been successfully created.
- Now you can <a href="{% url "login" %}">log in</a>.
- </p>
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="">
+                <h1>Welcome {{ user.first_name|default_if_none:user.username }}!</h1>
+                <p>
+                Your account has been successfully created.
+                Now you can <a href="{% url "login" %}">Sign In</a>.
+                </p>
+            </div>
+        </div>
+    </div>
 {% endblock %}
