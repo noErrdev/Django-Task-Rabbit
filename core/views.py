@@ -1,18 +1,8 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm
 
-# Create your views here.
 def index(request):
     return render(request, "index.html")
-
-@login_required
-def customer(request):
-    return render(request, "customer.html")
-
-@login_required
-def courier(request):
-    return render(request, "courier.html")
 
 def sign_up(request):
     if request.method == 'POST':

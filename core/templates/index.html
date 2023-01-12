@@ -15,7 +15,7 @@
                     <div class="card-body">
                         <h4 class="card-title">CUSTOMER</h4>
                         <p class="card-text">{% lorem 20 w random %}</p>
-                        <a href="/customer/" class="btn btn-warning">Details</a>
+                        <a href="{% url 'customer:home' %}" class="btn btn-warning">Details</a>
                     </div>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                     <div class="card-body">
                         <h4 class="card-title">COURIER</h4>
                         <p class="card-text">{% lorem 20 w random %}</p>
-                        <a href="/courier/" class="btn btn-warning">Details</a>
+                        <a href="{% url 'courier:home' %}" class="btn btn-warning">Details</a>
                     </div>
                 </div>
             </div>
