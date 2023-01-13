@@ -19,5 +19,5 @@ def send_welcome_mail(sender, instance, created, **kwargs):
             body,
             settings.DEFAULT_FROM_EMAIL,
             [instance.email],
-            fail_silently=False
+            fail_silently=True
         )
