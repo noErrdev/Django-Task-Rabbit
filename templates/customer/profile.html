@@ -1,0 +1,18 @@
+{% extends 'customer/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block main %}
+    <br>
+    <b class="text-secondary">Your Information</b>
+    <br>
+    <div class="card bg-white mt-2 mb-5">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="hidden" name="action" value="update_profile">
+                <button type="submit" class="btn btn-warning">Save</button>
+            </form>
+        </div>
+    </div>
+{% endblock  %}
