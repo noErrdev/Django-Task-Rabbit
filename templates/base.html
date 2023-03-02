@@ -9,7 +9,7 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     {% block title %}{% endblock title %}
 </head>
-<body>
+<body class="position-relative">
     <nav class="navbar navbar-expand-lg navbar-light bg-warning">
         <div class="container">
             <a class="navbar-brand" href="/">Task Rabbit</a>
@@ -37,30 +37,39 @@
         </div>
     </nav>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show w-50 mx-auto my-2" role="alert">
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              <strong>{{ message }}</strong>
+            </div>
+            
+            {% endfor %}
+            <script>
+              var alertList = document.querySelectorAll('.alert');
+              alertList.forEach(function (alert) {
+                new bootstrap.Alert(alert)
+                setTimeout(() => { alert.classList.toggle('show') }, 4000)
+              })
+            </script>
+    {% endif %}
+    
     {% block content %}{% endblock content %}
 
     <footer class="text-center mt-5 mb-5" >
         &copy; Taskrabbit 2023
     </footer>
 
-    <script src="{% static 'js/bootoast.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/bootoast.min.css' %}">
-
-    <script>
-        function toast(message, type) {
-            bootoast.toast({
-                message: message,
-                type: type,
-                position: 'leftBottom'
-                timeout: 2
+    {% comment %} <script>
+        const toasts = document.querySelectorAll('div[role="alert"]')
+        if (toasts != null) {
+            toasts.forEach((toast) => {
+                toast.style.display = 'fixed'
+                toast.style.left = "50px"
+                toast.style.bottom = '60px'
+                setTimeout(() => { toast.style.display = 'none' }, 2000 )
             })
         }
-    </script>
-
-    {% if messages %}
-        {% for message in messages %}
-            toast(`{{ message }}`, `{{ message.tags }}`)
-        {% endfor %}
-    {% endif %}
+    </script> {% endcomment %}
 </body>
 </html>
