@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .forms import CustomerProfileForm
+from .forms import UserProfileForm, BasicCustomerForm
 
 @login_required
 def customer_index(request):
@@ -9,11 +9,14 @@ def customer_index(request):
 
 @login_required(login_url="/sign-in/?next=/customer/")
 def customer_profile(request):
-    form = CustomerProfileForm(instance=request.user)
+    form = UserProfileForm(instance=request.user)
+    customer_form = BasicCustomerForm(instance=request.user.customer)
 
     if request.method == "POST":
-        form = CustomerProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
+        form = UserProfileForm(request.POST, instance=request.user)
+        customer_form = BasicCustomerForm(request.POST, request.FILES, instance=request.user.customer)
+        if form.is_valid() and customer_form.is_valid():
             form.save()
+            customer_form.save()
             return redirect(reverse('customer:profile'))
-    return render(request, "customer/profile.html", { "form": form })
+    return render(request, "customer/profile.html", { "form": form, "customer_form": customer_form })

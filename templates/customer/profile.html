@@ -7,9 +7,10 @@
     <br>
     <div class="card bg-white mt-2 mb-5">
         <div class="card-body">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
+                {{ customer_form|crispy }}
                 <input type="hidden" name="action" value="update_profile">
                 <button type="submit" class="btn btn-warning">Save</button>
             </form>
