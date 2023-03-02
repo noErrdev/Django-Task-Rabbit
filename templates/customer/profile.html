@@ -16,4 +16,17 @@
             </form>
         </div>
     </div>
+    
+    <b class="text-secondary">Change Password</b>
+    <br>
+    <div class="card bg-white mt-2 mb-5">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                {{ password_change_form|crispy }}
+                <input type="hidden" name="action" value="update_password">
+                <button type="submit" class="btn btn-warning">Update password</button>
+            </form>
+        </div>
+    </div>
 {% endblock  %}
