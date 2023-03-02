@@ -47,9 +47,12 @@
             {% endfor %}
             <script>
               var alertList = document.querySelectorAll('.alert');
+              var buttons = document.querySelectorAll('button.btn-close')
               alertList.forEach(function (alert) {
                 new bootstrap.Alert(alert)
-                setTimeout(() => { alert.classList.toggle('show') }, 4000)
+                buttons.forEach((button) => {
+                    setTimeout(() => { button.click() }, 4000)
+                })
               })
             </script>
     {% endif %}
