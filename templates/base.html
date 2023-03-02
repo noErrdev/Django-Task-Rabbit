@@ -42,5 +42,25 @@
     <footer class="text-center mt-5 mb-5" >
         &copy; Taskrabbit 2023
     </footer>
+
+    <script src="{% static 'js/bootoast.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/bootoast.min.css' %}">
+
+    <script>
+        function toast(message, type) {
+            bootoast.toast({
+                message: message,
+                type: type,
+                position: 'leftBottom'
+                timeout: 2
+            })
+        }
+    </script>
+
+    {% if messages %}
+        {% for message in messages %}
+            toast(`{{ message }}`, `{{ message.tags }}`)
+        {% endfor %}
+    {% endif %}
 </body>
 </html>

@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import UserProfileForm, BasicCustomerForm
 
+from django.contrib import messages
+
 @login_required
 def customer_index(request):
     return redirect(reverse('customer:profile'))
@@ -18,5 +20,6 @@ def customer_profile(request):
         if form.is_valid() and customer_form.is_valid():
             form.save()
             customer_form.save()
+            messages.success(request, "Your profile has been updated sucessfully!")
             return redirect(reverse('customer:profile'))
     return render(request, "customer/profile.html", { "form": form, "customer_form": customer_form })
