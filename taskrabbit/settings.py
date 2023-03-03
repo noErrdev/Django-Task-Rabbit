@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -154,3 +156,19 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 DEFAULT_FROM_EMAIL = "Task Rabbit <noreply@taskrabbit.com>"
+
+FIREBASE_ADMIN_CREDENTIALS_DICT = {
+  "type": os.getenv("FIREBASE_ACCOUNT_TYPE"), 
+  "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+  "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+  "private_key": os.getenv("FIREBASE_PRIVATE_KEY"),
+  "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+  "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+  "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+  "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+  "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_CERT_URL"),
+  "client_x509_cert_url": os.getenv("FIREBAE_CLIENT_CERT_URL") 
+}
+
+FIREBASE_ADMIN_CREDENTIALS_PATH = os.path.join(BASE_DIR, "config/firebase/task-rabbit-7d031-firebase-adminsdk-37zrj-63268dcbe9.json")
+

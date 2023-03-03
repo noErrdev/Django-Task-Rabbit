@@ -3,9 +3,21 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import UserProfileForm, BasicCustomerForm
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+
+import firebase_admin
+from firebase_admin import credentials, auth
+
+if settings.DEBUG == True:
+    cred = credentials.Certificate(settings.FIREBASE_ADMIN_CREDENTIALS_PATH)
+    firebase_admin.initialize_app(cred)
+elif settings.DEBUG == False:
+    cred = credentials.Certificate(settings.FIREBASE_ADMIN_CREDENTIALS_DICT)
+    firebase_admin.initialize_app(cred)
+
 
 profile_namespace = 'customer:profile'
 
@@ -35,6 +47,11 @@ def customer_profile(request):
                 update_session_auth_hash(request, user_password)
                 messages.success(request, "Your password has been updated sucessfully!")
                 return redirect(reverse(profile_namespace))
+        elif request.POST.get('action') == 'update_phone':
+            firebase_user = auth.verify_id_token(request.POST.get('id_token'))
+            request.user.customer.phone_number = firebase_user['phone_number']
+            request.user.customer.save()
+            return redirect(reverse(profile_namespace))
     return render(request, "customer/profile.html", 
         {   "form": form, 
             "customer_form": customer_form, 
