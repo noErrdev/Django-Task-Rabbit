@@ -1,5 +1,29 @@
 {% extends 'customer/base.html' %}
 {% load crispy_forms_tags %}
+{% load get_env %}
+
+
+{% block head %}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        const firebaseConfig = {
+            apiKey: "{% get_env_var 'APIKEY' %}",
+            authDomain: "task-rabbit-7d031.firebaseapp.com",
+            projectId: "task-rabbit-7d031",
+            storageBucket: "task-rabbit-7d031.appspot.com",
+            messagingSenderId: "363527763746",
+            appId: "1:363527763746:web:9eeb354ecbdc1b238a177b"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+    </script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js"></script>
+{% endblock head %}
+
+{% block title %}
+    <title>Profile | Task Rabbit</title>
+{% endblock title %}
 
 {% block main %}
     <br>

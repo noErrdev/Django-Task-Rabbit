@@ -7,9 +7,11 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
+profile_namespace = 'customer:profile'
+
 @login_required
 def customer_index(request):
-    return redirect(reverse('customer:profile'))
+    return redirect(reverse(profile_namespace))
 
 @login_required(login_url="/sign-in/?next=/customer/")
 def customer_profile(request):
@@ -26,13 +28,13 @@ def customer_profile(request):
                 form.save()
                 customer_form.save()
                 messages.success(request, "Your profile has been updated sucessfully!")
-                return redirect(reverse('customer:profile'))
+                return redirect(reverse(profile_namespace))
         elif request.POST.get('action') == 'update_password':
             if password_change_form.is_valid(): 
                 user_password = password_change_form.save()
                 update_session_auth_hash(request, user_password)
                 messages.success(request, "Your password has been updated sucessfully!")
-                return redirect(reverse('customer:profile'))
+                return redirect(reverse(profile_namespace))
     return render(request, "customer/profile.html", 
         {   "form": form, 
             "customer_form": customer_form, 
