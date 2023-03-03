@@ -18,7 +18,6 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
     </script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js"></script>
 {% endblock head %}
 
 {% block title %}
@@ -53,4 +52,79 @@
             </form>
         </div>
     </div>
+    
+    <b class="text-secondary">Verify By Phone number</b>
+    <br>
+    <div class="card bg-white mt-2 mb-5">
+        <div class="card-body">
+            <div id="recaptcha-container"></div>
+            <div id="get-otp-code" class="input-group mb-3">
+                <input type="text" name="get_otp" id="get_otp_input" class="form-control" placeholder="Enter your phone number with your country calling code" required>
+                <input type="hidden" name="receive" value="verify_phone_number">
+                <button type="submit" class="btn btn-warning">Send otp code</button>
+            </div>
+            <div id="set-otp-code" class="input-group mb-3 d-none">
+                <input type="text" name="set_otp" id="set_otp_input" class="form-control" placeholder="Enter your otp verification code" required>
+                <input type="hidden" name="verify" value="verify_phone_number">
+                <button id="set-otp-btn" type="submit" class="btn btn-warning">Verify otp code</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
+        
+        const get_otp_code_block = document.querySelector('#get-otp-code')
+        const set_otp_code_block = document.querySelector('#set-otp-code')
+        const get_otp_btn = document.querySelector('#get-otp-code button')
+        const set_otp_btn = document.querySelector('#set-otp-')
+        const get_phone_no = document.querySelector('#get-otp-code input')
+        const get_otp_code = document.querySelector('#set-otp-code input')
+
+        const auth = getAuth();
+        
+        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth);
+
+
+        if (get_otp_code_block !== null) {
+            if (get_otp_btn !== null) {
+                get_otp_btn.addEventListener('click', () => {
+                    if (get_phone_no !== null) {
+                        const phoneNumber = get_phone_no.value
+                        const appVerifier = window.recaptchaVerifier;
+                        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                            .then((confirmationResult) => {
+                            console.log(confirmationResult)
+                            window.confirmationResult = confirmationResult;
+                            get_otp_code_block.classList.add('d-none')
+                            set_otp_code_block.classList.remove('d-none')
+                        }).catch((error) => {
+                            console.log(error)
+                        });
+                        
+                    }
+                })
+            }
+        }
+        
+        if (set_otp_code_block !== null) {
+            if (set_otp_btn !== null) {
+                set_otp_btn.addEventListener('click', () => {
+                    if (get_otp_code !== null) {
+                        const code = get_otp_code.value
+                        console.log(code)
+                        confirmationResult.confirm(code).then((result) => {
+                            const user = result.user;
+                            console.log(user.phoneNUmber)
+                            user.getIdToken().then((idToken) => {
+                                console.log(idToken)
+                            })
+                        }).catch((error) => {
+                            console.log(error)
+                        });
+                    }
+                })
+            }
+        }
+    </script>
 {% endblock  %}
