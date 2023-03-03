@@ -53,12 +53,13 @@
         </div>
     </div>
     
-    <b class="text-secondary">Verify By Phone number</b>
+    <b class="text-secondary">Phone number</b>
     <br>
     <div class="card bg-white mt-2 mb-5">
         <div class="card-body">
             <div id="recaptcha-container"></div>
-            <div id="get-otp-code" class="input-group mb-3">
+            
+            <div id="get-otp-code" class="input-group mb-3 {% if request.user.customer.phone_number %} d-none {% endif %}">
                 <input type="text" name="get_otp" id="get_otp_input" class="form-control" placeholder="Enter your phone number with your country calling code" required>
                 <input type="hidden" name="receive" value="verify_phone_number">
                 <button type="submit" class="btn btn-warning">Send otp code</button>
@@ -67,6 +68,10 @@
                 <input type="text" name="set_otp" id="set_otp_input" class="form-control" placeholder="Enter your otp verification code" required>
                 <input type="hidden" name="verify" value="verify_phone_number">
                 <button id="set-otp-btn" type="submit" class="btn btn-warning">Verify otp code</button>
+            </div>
+            <div id="change-phone" class="input-group mb-3 {% if not request.user.customer.phone_number %} d-none {% endif %}">
+                <input type="text" class="form-control" value={{ request.user.customer.phone_number }} disabled>
+                <button type="submit" class="btn btn-warning">Change</button>
             </div>
         </div>
     </div>
@@ -80,6 +85,8 @@
         const set_otp_btn = document.querySelector('#set-otp-code button')
         const get_phone_no = document.querySelector('#get-otp-code input')
         const get_otp_code = document.querySelector('#set-otp-code input')
+        const change_phone_number = document.querySelector('#change-phone')
+        const change_phone_numbe_btn = document.querySelector('#change-phone button')
 
         const auth = getAuth();
         
@@ -124,7 +131,6 @@
                         const appVerifier = window.recaptchaVerifier;
                         signInWithPhoneNumber(auth, phoneNumber, appVerifier)
                             .then((confirmationResult) => {
-                            console.log(confirmationResult)
                             window.confirmationResult = confirmationResult;
                             get_otp_code_block.classList.add('d-none')
                             set_otp_code_block.classList.remove('d-none')
@@ -141,13 +147,10 @@
             set_otp_btn?.addEventListener('click', () => {
                 if (get_otp_code !== null) {
                     const code = get_otp_code.value
-                    console.log(code)
                     confirmationResult.confirm(code).then((result) => {
                         const user = result.user;
-                        console.log(user.phoneNUmber)
                         user.getIdToken().then((idToken) => {
                             onVerify(idToken)
-                            console.log(idToken)
                         })
                     }).catch((error) => {
                         console.log(error)
@@ -156,6 +159,15 @@
                     console.log('error')
                 }
             })
+        }
+
+        if (change_phone_number !== null) {
+            if (change_phone_numbe_btn !== null) {
+                change_phone_numbe_btn.addEventListener('click', () => {
+                    change_phone_number.classList.add('d-none')
+                    get_otp_code_block.classList.remove('d-none')
+                })
+            }
         }
     </script>
 {% endblock  %}
