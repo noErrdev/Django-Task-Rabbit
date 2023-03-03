@@ -18,6 +18,9 @@ elif settings.DEBUG == False:
     cred = credentials.Certificate(settings.FIREBASE_ADMIN_CREDENTIALS_DICT)
     firebase_admin.initialize_app(cred)
 
+import stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 profile_namespace = 'customer:profile'
 
@@ -58,3 +61,17 @@ def customer_profile(request):
             "password_change_form": password_change_form 
         }
     )
+
+@login_required(login_url="/sign-in/?next=/customer/")
+def customer_payment(request):
+    current_customer = request.user.customer
+    if not current_customer.stripe_customer_id:
+        customer = stripe.Customer.create()
+        current_customer.stripe_customer_id = customer['id']
+        current_customer.save()
+    
+    intent = stripe.SetupIntent.create(
+        customer=current_customer.stripe_customer_id,
+        payment_method_types=["card"],
+    )
+    return render(request, "customer/payment.html", { "client_secret": intent.client_secret })

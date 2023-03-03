@@ -10,6 +10,7 @@ crispy-bootstrap5 = "~=0.6"
 pillow = "==9.3.0"
 python-dotenv = "~=1.0.0"
 firebase-admin = "~=6.1.0"
+stripe = "~=5.2.0"
 
 [dev-packages]
 

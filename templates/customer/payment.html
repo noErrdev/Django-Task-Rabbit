@@ -1,0 +1,44 @@
+{% extends 'customer/base.html' %}
+{% load crispy_forms_tags %}
+{% load get_env %}
+
+{% block head %}
+    <script src="https://js.stripe.com/v3/"></script>
+{% endblock head %}
+
+{% block title %}
+    <title>Payment | Task Rabbit</title>
+{% endblock title %}
+
+{% block main %}
+    <br>
+    <b class="text-secondary">Your Credit/Dedit card Information</b>
+    <div class="card bg-white mt-2 mb-5">
+        <div class="card-body">
+            <form id="payment-form" data-secret="{{ client_secret }}">
+                <div id="payment-element">
+                    <!-- Elements will create form elements here -->
+                </div>
+                <div id="error-message">
+                    <!-- Display error message to your customers here -->
+                </div>
+                <br>
+                <button type="button" class="btn btn-warning" id="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        const stripe = Stripe("{% get_env_var 'STRIPE_PUBLIC_KEY' %}");
+        const options = {
+            clientSecret: '{{ client_secret }}',
+        };
+
+        // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in step 3
+        const elements = stripe.elements(options);
+
+        // Create and mount the Payment Element
+        const paymentElement = elements.create('payment');
+        paymentElement.mount('#payment-element');
+    </script>
+{% endblock main %}

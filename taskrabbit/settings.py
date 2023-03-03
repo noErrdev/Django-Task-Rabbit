@@ -172,3 +172,6 @@ FIREBASE_ADMIN_CREDENTIALS_DICT = {
 
 FIREBASE_ADMIN_CREDENTIALS_PATH = os.path.join(BASE_DIR, "config/firebase/task-rabbit-7d031-firebase-adminsdk-37zrj-63268dcbe9.json")
 
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
