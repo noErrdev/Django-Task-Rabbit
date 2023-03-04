@@ -14,14 +14,16 @@
 
 {% block main %}
     {% if not request.user.customer.stripe_payments_method_id %}
-        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+        <br>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             Let's add your credit/debit card to <strong>Create a Job</strong>!
         </div>
     {% endif %}
     
     {% if request.user.customer.stripe_payments_method_id %}
-        <div class="alert alert-success alert-dismissible fade w-50 mx-auto mt-2 show" role="alert">
+        <br>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <strong>Card saved successfully!</strong>
         </div>
@@ -62,14 +64,17 @@
     </div>
 
     <script>
-      let alertListBtn = document.querySelectorAll('.alert > button');
-      alertListBtn.forEach((btn) => {
-        btn.click()
-      })
+        let alertListBtn = document.querySelectorAll('.alert > button');
+        alertListBtn.forEach((btn) => {
+            setTimeout(() => {
+                btn.click() 
+            }, 6000)
+        })
     </script>
 
     {% if not request.user.customer.stripe_payments_method_id %}
         <script type="module">
+
             const stripe = Stripe("{% get_env_var 'STRIPE_PUBLIC_KEY' %}");
             const options = {
                 clientSecret: '{{ client_secret }}',

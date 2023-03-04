@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
 {% block content %}
+    {% url 'customer:create_job' as create_job_url %}
+    {% url 'customer:payment' as pay_url %}
+    {% url 'customer:profile' as profile_url %}
     <div class="container bg-light mt-4 pt-3 pb-3">
         <div class="row">
             <div class="col-lg-4">
@@ -14,12 +18,24 @@
                     <h4>{{ request.user.get_full_name }}</h4>
                     <p class="text-secondary">{{ request.user.email }}</p>
                 </div>
-                <ul class="list-group">
-                    <li class="list-group-item">Create a Job Posting</li>
-                    <li class="list-group-item">My Jobs</li>
-                    <li class="list-group-item">Profile Information</li>
-                    <li class="list-group-item">Payment Details</li>
-                </ul>
+                
+                <div class="list-group mt-5">
+                    <a class="list-group-item list-group-item-action {% if request.path == create_job_url %}active{% endif %}" href="{{ create_job_url }}">
+                        Create a Job Posting
+                    </a>
+                    
+                    <a class="list-group-item list-group-item-action" href="{% url 'customer:create_job' %}">
+                        My Jobs
+                    </a>
+                    
+                    <a class="list-group-item list-group-item-action {% if request.path == profile_url %}active{% endif %}" href="{{ profile_url }}">
+                        Profile Information
+                    </a>
+                   
+                    <a class="list-group-item list-group-item-action {% if request.path == pay_url %}active{% endif %}" href="{{ pay_url }}">
+                        Your Payment Method
+                    </a>
+                </div>
             </div>
             <div class="col-lg-8">
                 {% block main %}{% endblock  %}

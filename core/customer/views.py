@@ -102,3 +102,11 @@ def customer_payment(request):
         return render(request, "customer/payment.html", { "client_secret": intent.client_secret })
     else:
         return render(request, "customer/payment.html")
+    
+@login_required(login_url="/sign-in/?next=/customer/")
+def customer_create_job(request):
+    current_customer = request.user.customer
+    if not current_customer.stripe_payments_method_id:
+        return redirect(reverse("customer:payment")) 
+    
+    return render(request, "customer/create_job.html")

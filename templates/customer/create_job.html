@@ -1,0 +1,48 @@
+{% extends 'customer/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block main %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">Job Summary</div>
+                    <div class="card-body">
+                        <p>A summary of the details regarding a job is shown here</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="carb mb-5">
+                    <div class="card-body">
+                        <h3 class="text-muted">
+                            Create a Job
+                        </h3>
+                        <ul class="nav nav-pills mt-4" id="myTab" role="tablist">
+                          <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="job-info-tab" data-bs-toggle="tab" data-bs-target="#job-info" type="button" role="tab" aria-controls="job information" aria-selected="true">Job Details</button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="job-pickup-tab" data-bs-toggle="tab" data-bs-target="#pickup" type="button" role="tab" aria-controls="job pickup" aria-selected="false">Pickup</button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="job-delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="job delivery" aria-selected="false">Delivery</button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="job-payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="job payment" aria-selected="false">Payment</button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tab-content">
+                  <div class="tab-pane active" id="job-info" role="tabpanel" aria-labelledby="job-info-tab"></div>
+                  <div class="tab-pane" id="pickup" role="tabpanel" aria-labelledby="job-pickup-tab"></div>
+                  <div class="tab-pane" id="delivery" role="tabpanel" aria-labelledby="job-delivery-tab"> </div>
+                  <div class="tab-pane" id="payment" role="tabpanel" aria-labelledby="job-payment-tab"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main %}
+
