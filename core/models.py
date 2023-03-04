@@ -59,11 +59,11 @@ class Job(models.Model):
     photo = models.ImageField(upload_to='job/photos/')
     created_at = models.DateTimeField(default=timezone.now)
 
-    pickup_address = models.CharField(max_length=300, blank=True, null=True)
+    pickup_address = models.CharField(max_length=300, blank=True, default="job address")
     pickup_latitude = models.FloatField(default=0, blank=True, null=True)
     pickup_longtitude = models.FloatField(default=0, blank=True, null=True)
     pickup_name = models.CharField(max_length=300, blank=True)
-    pickup_phone = models.CharField(max_length=50, blank=True)
+    pickup_phone_number = models.CharField(max_length=50, blank=True)
     
 
     def __str__(self):

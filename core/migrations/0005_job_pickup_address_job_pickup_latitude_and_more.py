@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='job',
-            name='pickup_phone',
+            name='pickup_phone_number',
             field=models.CharField(blank=True, max_length=50),
         ),
     ]

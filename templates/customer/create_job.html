@@ -6,65 +6,84 @@
 {% endblock title %}
 
 {% block main %}
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">Job Summary</div>
-                    <div class="card-body">
-                        <p>A summary of the details regarding a job is shown here</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <div class="carb mb-5">
-                    <div class="card-body">
-                        <h3 class="text-muted">
-                            Create a Job
-                        </h3>
-                        <ul class="nav nav-pills mt-4" id="myTab" role="tablist">
-                          <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if current_step == 1 %}active{% endif %}" id="job-info-tab" data-bs-toggle="tab" data-bs-target="#job-info" type="button" role="tab" aria-controls="job information" aria-selected="true">Job Details</button>
-                          </li>
-                          <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if current_step == 2 %}active{% endif %}" id="job-pickup-tab" data-bs-toggle="tab" data-bs-target="#pickup" type="button" role="tab" aria-controls="job pickup" aria-selected="false">Pickup</button>
-                          </li>
-                          <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if current_step == 3 %}active{% endif %}" id="job-delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="job delivery" aria-selected="false">Delivery</button>
-                          </li>
-                          <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if current_step == 4 %}active{% endif %}" id="job-payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="job payment" aria-selected="false">Payment</button>
-                          </li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                  <div class="tab-pane {% if current_step == 1 %}active{% endif %}" id="job-info" role="tabpanel" aria-labelledby="job-info-tab">
-                    <p style="font-size: 18px">Enter the Job Information</p>
-                    <form method="POST" enctype='multipart/form-data'>
-                      <div class="card bg-white mt-2 mb-5">
-                        <div class="card-body">
-                          {% csrf_token %}
-                          {{ job_creation_form|crispy }}
-                        </div>
+  <div class="container mt-4">
+      <div class="row">
+          <div class="col-lg-4">
+              <div class="card">
+                  <div class="card-header">Job Summary</div>
+                  <div class="card-body">
+                      <p>A summary of the details regarding a job is shown here</p>
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-8">
+              <div class="carb mb-5">
+                  <div class="card-body">
+                      <h3 class="text-muted">
+                          Create a Job
+                      </h3>
+                      <ul class="nav nav-pills mt-4" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 1 %}active{% endif %}" id="job-info-tab" data-bs-toggle="tab" data-bs-target="#job-info" type="button" role="tab" aria-controls="job information" aria-selected="true">Job Details</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 2 %}active{% endif %}" id="job-pickup-tab" data-bs-toggle="tab" data-bs-target="#pickup" type="button" role="tab" aria-controls="job pickup" aria-selected="false">Pickup</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 3 %}active{% endif %}" id="job-delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="job delivery" aria-selected="false">Delivery</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 4 %}active{% endif %}" id="job-payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="job payment" aria-selected="false">Payment</button>
+                        </li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <div class="tab-content">
+                <div class="tab-pane {% if current_step == 1 %}active{% endif %}" id="job-info" role="tabpanel" aria-labelledby="job-info-tab">
+                  <p style="font-size: 18px">Enter the Job Information</p>
+                  <form method="POST" enctype='multipart/form-data'>
+                    <div class="card bg-white mt-2 mb-5">
+                      <div class="card-body">
+                        {% csrf_token %}
+                        {{ job_creation_form|crispy }}
                       </div>
-                      <input type="hidden" name="step" value="step_1">
-                      <button class="btn btn-warning" type="submit">Save & Continue</button>
-                    </form>
-                  </div>
-                  <div class="tab-pane {% if current_step == 2 %}active{% endif %}" id="pickup" role="tabpanel" aria-labelledby="job-pickup-tab">
-                    <p style="font-size: 18px">Enter the Pickup Information</p>
-                  </div>
-                  <div class="tab-pane {% if current_step == 3 %}active{% endif %}" id="delivery" role="tabpanel" aria-labelledby="job-delivery-tab">
-                    <p style="font-size: 18px">Enter the Delivery Information</p>
-                  </div>
-                  <div class="tab-pane {% if current_step == 4 %}active{% endif %}" id="payment" role="tabpanel" aria-labelledby="job-payment-tab">
-                    <p style="font-size: 18px">Enter the Payment Information</p>
-                  </div>
+                    </div>
+                    <input type="hidden" name="step" value="step_1">
+                    <button class="btn btn-warning" type="submit">Save & Continue</button>
+                  </form>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="tab-pane {% if current_step == 2 %}active{% endif %}" id="pickup" role="tabpanel" aria-labelledby="job-pickup-tab">
+                  <p style="font-size: 18px">Enter the Pickup Information</p>
+                  <form method="POST">
+                    <div class="card bg-white mt-2 mb-5">
+                      <div class="card-body">
+                        {% csrf_token %}
+                        {{ job_pickup_form|crispy }}
+                      </div>
+                    </div>
+                    <input type="hidden" name="step" value="step_2">
+                    <button id="go_back_to_job_info" class="btn btn-outline-warning">Go Back</button>
+                    <button class="btn btn-warning" type="submit">Save & Continue</button>
+                  </form>
+                </div>
+                <div class="tab-pane {% if current_step == 3 %}active{% endif %}" id="delivery" role="tabpanel" aria-labelledby="job-delivery-tab">
+                  <p style="font-size: 18px">Enter the Delivery Information</p>
+                </div>
+                <div class="tab-pane {% if current_step == 4 %}active{% endif %}" id="payment" role="tabpanel" aria-labelledby="job-payment-tab">
+                  <p style="font-size: 18px">Enter the Payment Information</p>
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <script>
+    const go_back_to_job_info = document.querySelector('#go_back_to_job_info')
+    const job_info_tab_btn = document.querySelector('#job-info-tab')
+
+    go_back_to_job_info.addEventListener('click', () => {
+      job_info_tab_btn.click()
+    })
+  </script>
 {% endblock main %}
 
