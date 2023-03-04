@@ -40,7 +40,19 @@
                 </div>
                 
                 <div class="tab-content">
-                  <div class="tab-pane active" id="job-info" role="tabpanel" aria-labelledby="job-info-tab"></div>
+                  <div class="tab-pane active" id="job-info" role="tabpanel" aria-labelledby="job-info-tab">
+                    <p style="font-size: 18px">Enter the Job Information</p>
+                    <form method="POST" enctype='multipart/form-data'>
+                      <div class="card bg-white mt-2 mb-5">
+                        <div class="card-body">
+                          {% csrf_token %}
+                          {{ job_creation_form|crispy }}
+                        </div>
+                      </div>
+                      <input type="hidden" name="create_job" value="step_1">
+                      <button class="btn btn-warning" type="submit">Save & Continue</button>
+                    </form>
+                  </div>
                   <div class="tab-pane" id="pickup" role="tabpanel" aria-labelledby="job-pickup-tab"></div>
                   <div class="tab-pane" id="delivery" role="tabpanel" aria-labelledby="job-delivery-tab"> </div>
                   <div class="tab-pane" id="payment" role="tabpanel" aria-labelledby="job-payment-tab"></div>
