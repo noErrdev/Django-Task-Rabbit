@@ -65,13 +65,40 @@ def customer_profile(request):
 @login_required(login_url="/sign-in/?next=/customer/")
 def customer_payment(request):
     current_customer = request.user.customer
+
     if not current_customer.stripe_customer_id:
         customer = stripe.Customer.create()
         current_customer.stripe_customer_id = customer['id']
         current_customer.save()
-    
-    intent = stripe.SetupIntent.create(
+   
+    stripe_payment_methods = stripe.PaymentMethod.list(
         customer=current_customer.stripe_customer_id,
-        payment_method_types=["card"],
+        type="card"
     )
-    return render(request, "customer/payment.html", { "client_secret": intent.client_secret })
+
+    if stripe_payment_methods and len(stripe_payment_methods.data) > 0:
+        payment_method = stripe_payment_methods.data[0]
+        current_customer.stripe_payments_method_id = payment_method.id
+        current_customer.stripe_card_last_4_digits = payment_method.card.last4
+        current_customer.save()
+    else: 
+        current_customer.stripe_payments_method_id = ""
+        current_customer.stripe_card_last_4_digits = "" 
+        current_customer.save()
+
+    if request.method == "POST":
+        sp_id = request.user.customer.stripe_payments_method_id
+        stripe.PaymentMethod.detach(sp_id)
+        current_customer.stripe_payments_method_id = ""
+        current_customer.stripe_card_last_4_digits = "" 
+        current_customer.save()
+        return redirect(reverse('customer:payment'))
+    
+    if not current_customer.stripe_payments_method_id:
+        intent = stripe.SetupIntent.create(
+            customer=current_customer.stripe_customer_id,
+            payment_method_types=["card"],
+        )
+        return render(request, "customer/payment.html", { "client_secret": intent.client_secret })
+    else:
+        return render(request, "customer/payment.html")
