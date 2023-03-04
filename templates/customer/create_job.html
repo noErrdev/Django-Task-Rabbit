@@ -24,23 +24,23 @@
                         </h3>
                         <ul class="nav nav-pills mt-4" id="myTab" role="tablist">
                           <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="job-info-tab" data-bs-toggle="tab" data-bs-target="#job-info" type="button" role="tab" aria-controls="job information" aria-selected="true">Job Details</button>
+                            <button class="nav-link {% if current_step == 1 %}active{% endif %}" id="job-info-tab" data-bs-toggle="tab" data-bs-target="#job-info" type="button" role="tab" aria-controls="job information" aria-selected="true">Job Details</button>
                           </li>
                           <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="job-pickup-tab" data-bs-toggle="tab" data-bs-target="#pickup" type="button" role="tab" aria-controls="job pickup" aria-selected="false">Pickup</button>
+                            <button class="nav-link {% if current_step == 2 %}active{% endif %}" id="job-pickup-tab" data-bs-toggle="tab" data-bs-target="#pickup" type="button" role="tab" aria-controls="job pickup" aria-selected="false">Pickup</button>
                           </li>
                           <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="job-delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="job delivery" aria-selected="false">Delivery</button>
+                            <button class="nav-link {% if current_step == 3 %}active{% endif %}" id="job-delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="job delivery" aria-selected="false">Delivery</button>
                           </li>
                           <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="job-payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="job payment" aria-selected="false">Payment</button>
+                            <button class="nav-link {% if current_step == 4 %}active{% endif %}" id="job-payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="job payment" aria-selected="false">Payment</button>
                           </li>
                         </ul>
                     </div>
                 </div>
                 
                 <div class="tab-content">
-                  <div class="tab-pane active" id="job-info" role="tabpanel" aria-labelledby="job-info-tab">
+                  <div class="tab-pane {% if current_step == 1 %}active{% endif %}" id="job-info" role="tabpanel" aria-labelledby="job-info-tab">
                     <p style="font-size: 18px">Enter the Job Information</p>
                     <form method="POST" enctype='multipart/form-data'>
                       <div class="card bg-white mt-2 mb-5">
@@ -49,13 +49,19 @@
                           {{ job_creation_form|crispy }}
                         </div>
                       </div>
-                      <input type="hidden" name="create_job" value="step_1">
+                      <input type="hidden" name="step" value="step_1">
                       <button class="btn btn-warning" type="submit">Save & Continue</button>
                     </form>
                   </div>
-                  <div class="tab-pane" id="pickup" role="tabpanel" aria-labelledby="job-pickup-tab"></div>
-                  <div class="tab-pane" id="delivery" role="tabpanel" aria-labelledby="job-delivery-tab"> </div>
-                  <div class="tab-pane" id="payment" role="tabpanel" aria-labelledby="job-payment-tab"></div>
+                  <div class="tab-pane {% if current_step == 2 %}active{% endif %}" id="pickup" role="tabpanel" aria-labelledby="job-pickup-tab">
+                    <p style="font-size: 18px">Enter the Pickup Information</p>
+                  </div>
+                  <div class="tab-pane {% if current_step == 3 %}active{% endif %}" id="delivery" role="tabpanel" aria-labelledby="job-delivery-tab">
+                    <p style="font-size: 18px">Enter the Delivery Information</p>
+                  </div>
+                  <div class="tab-pane {% if current_step == 4 %}active{% endif %}" id="payment" role="tabpanel" aria-labelledby="job-payment-tab">
+                    <p style="font-size: 18px">Enter the Payment Information</p>
+                  </div>
                 </div>
             </div>
         </div>

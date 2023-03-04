@@ -22,19 +22,30 @@ class Category(models.Model):
         return self.name
 
 class Job(models.Model):
+    SMALL = "small"
+    MEDIUM = "medium"
+    LARGE = "large"
+
     SIZES = (
-        ('small', 'Small'),
-        ('medium', 'Medium'),
-        ('large', 'Large'),
+        (SMALL, 'Small'),
+        (MEDIUM, 'Medium'),
+        (LARGE, 'Large'),
     )
 
+    CREATING = "creating"
+    PROCESSING = "processing"
+    PICKING = "picking"
+    DELIVERING = "delivering"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
     JOB_STATUS = (
-        ('creating', 'Creating'),
-        ('processing', 'Processing'),
-        ('picking', 'Picking'),
-        ('delivering', 'Delivering'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled'),
+        (CREATING, 'Creating'),
+        (PROCESSING, 'Processing'),
+        (PICKING, 'Picking'),
+        (DELIVERING, 'Delivering'),
+        (COMPLETED, 'Completed'),
+        (CANCELLED, 'Cancelled'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -42,13 +53,20 @@ class Job(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=300)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-    size = models.CharField(max_length=6, choices=SIZES, default="medium")
-    status = models.CharField(max_length=10, choices=JOB_STATUS, default="creating")
+    size = models.CharField(max_length=6, choices=SIZES, default=MEDIUM)
+    status = models.CharField(max_length=10, choices=JOB_STATUS, default=CREATING)
     quantity = models.IntegerField(default=1)
     photo = models.ImageField(upload_to='job/photos/')
     created_at = models.DateTimeField(default=timezone.now)
+
+    pickup_address = models.CharField(max_length=300, blank=True, null=True)
+    pickup_latitude = models.FloatField(default=0, blank=True, null=True)
+    pickup_longtitude = models.FloatField(default=0, blank=True, null=True)
+    pickup_name = models.CharField(max_length=300, blank=True)
+    pickup_phone = models.CharField(max_length=50, blank=True)
     
+
     def __str__(self):
-        return self.name
+        return self.description
 
 

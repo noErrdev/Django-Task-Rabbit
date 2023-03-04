@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import UserProfileForm, BasicCustomerForm, JobCreationForm
+from ..models import Job
 
 from django.conf import settings
 from django.contrib import messages
@@ -109,5 +110,16 @@ def customer_create_job(request):
     if not current_customer.stripe_payments_method_id:
         return redirect(reverse("customer:payment")) 
     
-    job_creation_form = JobCreationForm()
-    return render(request, "customer/create_job.html", { "job_creation_form": job_creation_form })
+    created_jobs = Job.objects.filter(customer=current_customer, status=Job.CREATING).last()
+    job_creation_form = JobCreationForm(instance=created_jobs)
+
+    if not created_jobs:
+        current_step = 1
+    else:
+        current_step = 2
+
+    return render(request, "customer/create_job.html", { 
+        "created_jobs": created_jobs, 
+        "job_creation_form": job_creation_form, 
+        "current_step": current_step,
+    })
