@@ -107,6 +107,7 @@ def customer_payment(request):
 @login_required(login_url="/sign-in/?next=/customer/")
 def customer_create_job(request):
     current_customer = request.user.customer
+    current_step = 0
     if not current_customer.stripe_payments_method_id:
         return redirect(reverse("customer:payment")) 
     
