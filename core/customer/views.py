@@ -143,9 +143,17 @@ def customer_create_job(request):
             if job_pickup_form.is_valid():
                 created_jobs = job_pickup_form.save()
                 return redirect(reverse("customer:create_job"))
+        elif request.POST.get("step") == "3":
+            job_delivery_form = JobDeliveryForm(request.POST, instance=created_jobs)
+            if job_delivery_form.is_valid():
+                created_jobs = job_delivery_form.save()
+                return redirect(reverse("customer:create_job"))
+            
 
     if not created_jobs:
         current_step = 1
+    elif created_jobs.delivery_name:
+        current_step = 4
     elif created_jobs.pickup_name:
         current_step = 3
     else:
