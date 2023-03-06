@@ -25,8 +25,18 @@
                     {% if not created_jobs %}
                       <p>A summary of the details regarding a job is shown here</p>
                     {% else %}
-                      <h4>{{ created_jobs.name }}</h4>
-                      <span>{{ created_jobs.description }}</span>
+                      {% if current_step > 1 %}
+                      <p class="text-secondary"><b>Job Details</b></p>
+                      <p><b>Created by: </b>{{ created_jobs.name }}</p>
+                      <p><b>Job description: </b>{{ created_jobs.description }}</p>
+                      {% endif %}
+
+                      {% if current_step > 2 %}
+                        <hr>
+                        <p class="text-secondary"><b>Pickup Info</b></p>
+                        <p><b>Job allocated to: </b>{{ created_jobs.pickup_name }}</p>
+                        <p><b>Job address: </b>{{ created_jobs.pickup_address }}</p>
+                      {% endif %}
                     {% endif %}
                   </div>
               </div>
@@ -64,7 +74,7 @@
                         {{ job_creation_form|crispy }}
                       </div>
                     </div>
-                    <input type="hidden" name="step" value="step_1">
+                    <input type="hidden" name="step" value="1">
                     <button class="btn btn-warning" type="submit">Save & Continue</button>
                   </form>
                 </div>
@@ -90,6 +100,7 @@
                         </div>
                       </div>
                     </div>
+                    <input type="hidden" name="step" value="2">
                     <button id="go_back_to_job_info" class="btn btn-outline-warning">Go Back</button>
                     <button class="btn btn-warning" type="submit">Save & Continue</button>
                   </form>
@@ -111,27 +122,32 @@
     go_back_to_job_info.addEventListener('click', () => {
       job_info_tab_btn.click()
     })
+    
+    let pickup_lat = parseFloat('{{ job.pickup_latitude }}')
+    let pickup_lng = parseFloat('{{ job.pickup_longtitude }}')
 
     function initMap() {
       const map = new google.maps.Map(document.getElementById("job_pickup_map"), {
-        center: { lat: 40.749933, lng: -73.98633 },
+        center: { lat: pickup_lat || 6.465422, lng: pickup_lng || 3.406448 },
         zoom: 13,
         mapTypeControl: false,
       });
       const input = document.getElementById("id_pickup_address");
-      {% comment %} const biasInputElement = document.getElementById("use-location-bias"); {% endcomment %}
-      {% comment %} const strictBoundsInputElement = document.getElementById("use-strict-bounds"); {% endcomment %}
       const options = {
         fields: ["formatted_address", "geometry", "name"],
         strictBounds: false,
         types: ["establishment"],
       };
 
+      if (pickup_lat && pickup_lng) {
+        new google.maps.Marker({
+          position: new google.maps.LatLng(pickup_lat, pickup_lng),
+          map: map,
+        })
+      }
+
       const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-      // Bind the map's bounds (viewport) property to the autocomplete object,
-      // so that the autocomplete requests use the current map bounds for the
-      // bounds option in the request.
       autocomplete.bindTo("bounds", map);
 
       const infowindow = new google.maps.InfoWindow();
@@ -149,8 +165,8 @@
         marker.setVisible(false);
 
         const place = autocomplete.getPlace();
-        const lat = document.getElementById("pickup-latitude")
-        const long = document.getElementById("pickup-longtitude")
+        const lat = document.getElementById("id_pickup_latitude")
+        const long = document.getElementById("id_pickup_longtitude")
         lat.value = place.geometry.location.lat()
         long.value = place.geometry.location.lng()
         if (!place.geometry || !place.geometry.location) {

@@ -5,6 +5,7 @@ from . import models
 admin.site.register(models.Customer)
 admin.site.register(models.Job)
 
+
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('name',)}
+    prepopulated_fields = {"slug": ("name",)}
