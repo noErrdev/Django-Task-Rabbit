@@ -37,6 +37,13 @@
                         <p><b>Job allocated to: </b>{{ created_jobs.pickup_name }}</p>
                         <p><b>Job address: </b>{{ created_jobs.pickup_address }}</p>
                       {% endif %}
+
+                      {% if current_step > 3 %}
+                        <hr>
+                        <p class="text-secondary"><b>Delivery Info</b></p>
+                        <p><b>Delivery to: </b>{{ created_jobs.delivery_name }}</p>
+                        <p><b>Delivery address: </b>{{ created_jobs.delivery_address }}</p>
+                      {% endif %}
                     {% endif %}
                   </div>
               </div>
