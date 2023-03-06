@@ -26,3 +26,12 @@ class JobPickupForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ["pickup_address", "pickup_latitude", "pickup_longtitude", "pickup_name", "pickup_phone_number"]
+
+class JobDeliveryForm(forms.ModelForm):
+    delivery_address = forms.CharField(required=True)
+    delivery_name = forms.CharField(required=True)
+    delivery_phone_number = forms.CharField(required=True)
+    
+    class Meta:
+        model = Job
+        fields = ["delivery_address", "delivery_latitude", "delivery_longtitude", "delivery_name", "delivery_phone_number"]

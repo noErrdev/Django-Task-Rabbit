@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .forms import UserProfileForm, BasicCustomerForm, JobCreationForm, JobPickupForm
+from .forms import UserProfileForm, BasicCustomerForm, JobCreationForm, JobPickupForm, JobDeliveryForm
 from ..models import Job
 
 from django.conf import settings
@@ -126,6 +126,7 @@ def customer_create_job(request):
     ).last()
     job_creation_form = JobCreationForm(instance=created_jobs)
     job_pickup_form = JobPickupForm(instance=created_jobs)
+    job_delivery_form = JobDeliveryForm(instance=created_jobs)
 
     if request.method == "POST":
         if request.POST.get("step") == "1":
@@ -154,9 +155,10 @@ def customer_create_job(request):
         request,
         "customer/create_job.html",
         {
-            "created_jobs": created_jobs,
             "job_creation_form": job_creation_form,
             "job_pickup_form": job_pickup_form,
+            "job_delivery_form": job_delivery_form,
+            "created_jobs": created_jobs,
             "current_step": current_step,
         },
     )
