@@ -175,3 +175,5 @@ FIREBASE_ADMIN_CREDENTIALS_PATH = os.path.join(BASE_DIR, "config/firebase/task-r
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+MAPS_API_KEY = os.getenv("MAPS_API_KEY")
