@@ -146,10 +146,27 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         <strong>{{ messages }}</strong>
                       </div>
-                      
                     {% endfor %}
                   {% endif %}
-                  <p style="font-size: 18px">Enter the Payment Information</p>
+                  <p style="font-size: 18px">Your Payment Information</p>
+                  <form method="POST">
+                    <div class="card bg-white mt-2 mb-5">
+                      <div class="card-body">
+                      {% csrf_token %}
+                        <div class="form-group mt-2">
+                          <label>Your Debit/Credit Card</label>
+                          <input type="text" class="form-control" value="**** **** **** {{ request.user.customer.stripe_card_last_4_digits }}" disabled>
+                        </div>
+                        <div class="form-group mt-2">
+                          <label>Price</label>
+                          <input type="text" class="form-control" value="${{ created_jobs.price }}" disabled>
+                        </div>
+                      </div>
+                      <input type="hidden" name="step" value="4">
+                      <button id="go_back_to_job_delivery" class="btn btn-outline-warning mt-2 w-75 mx-auto">Go Back</button>
+                      <button class="btn btn-warning mt-2 mb-5 mx-auto w-75" type="submit">Create Job</button>
+                    </div>
+                  </form>
                 </div>
               </div>
           </div>
@@ -158,14 +175,19 @@
   <script>
     const go_back_to_job_info = document.querySelector('#go_back_to_job_info')
     const go_back_to_job_pickup = document.querySelector('#go_back_to_job_pickup')
+    const go_back_to_job_delivery = document.querySelector('#go_back_to_job_delivery')
     const job_info_tab_btn = document.querySelector('#job-info-tab')
     const job_pickup_tab_btn = document.querySelector('#job-pickup-tab')
+    const job_delivery_tab_btn = document.querySelector('#job-delivery-tab')
 
     go_back_to_job_info.addEventListener('click', () => {
       job_info_tab_btn.click()
     })
     go_back_to_job_pickup.addEventListener('click', () => {
       job_pickup_tab_btn.click()
+    })
+    go_back_to_job_delivery.addEventListener('click', () => {
+      job_delivery_tab_btn.click()
     })
     
     let pickup_lat = parseFloat('{{ created_jobs.pickup_latitude }}')

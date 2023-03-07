@@ -12,7 +12,7 @@ from .forms import (
     JobPickupForm,
     JobDeliveryForm,
 )
-from ..models import Job
+from ..models import Job, Transaction
 
 from django.conf import settings
 from django.contrib import messages
@@ -166,12 +166,13 @@ def customer_create_job(request):
                         + "&mode=transit&key="
                         + settings.DISTANCE_MATRIX_API_KEY
                     )
-                    url = url.replace(" ", "") 
+                    url = url.replace(" ", "")
                     r = requests.get(url, headers={}, data={})
 
-                    distance = r.json()["rows"][0]["elements"]["value"]
-                    duration = r.json()["rows"][0]["duration"]["value"]
+                    distance = r.json()["rows"][0]["elements"][0]["distance"]["value"]
+                    duration = r.json()["rows"][0]["elements"][0]["duration"]["value"]
 
+                    print(distance, duration)
                     created_jobs.distance = round(distance / 1000, 2)
                     created_jobs.duration = int(duration / 60)
                     created_jobs.price = created_jobs.distance * 1
@@ -179,9 +180,36 @@ def customer_create_job(request):
                     created_jobs.save()
                 except Exception as e:
                     print(e)
-                    messages.error(request, 'Unfortunately, we do not support delivery for your location!')
+                    messages.error(
+                        request,
+                        "Unfortunately, we do not support delivery for your location!",
+                    )
                 return redirect(reverse(create_job_namespace))
-
+        elif request.POST.get("step") == "4":
+            if created_jobs.price:
+                try:
+                    payment_intent = stripe.PaymentIntent.create(
+                        amount=int(created_jobs.price * 100),
+                        currency="usd",
+                        customer=current_customer.stripe_customer_id,
+                        payment_method=current_customer.stripe_payments_method_id,
+                        off_session=True,
+                        confirm=True,
+                    )
+                    Transaction.objects.create(
+                        stripe_payment_intent_id=payment_intent["id"],
+                        job=created_jobs,
+                        amount=created_jobs.price,
+                    )
+                    created_jobs.status = Job.PROCESSING
+                    created_jobs.save()
+                    return redirect(reverse("customer:home"))
+                except stripe.error.CardError as e:
+                    err = e.error
+                    # Error code will be authentication_required if authentication is needed
+                    print("Code is: %s" % err.code)
+                    payment_intent_id = err.payment_intent["id"]
+                    payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
 
     if not created_jobs:
         current_step = 1
@@ -191,7 +219,6 @@ def customer_create_job(request):
         current_step = 3
     else:
         current_step = 2
-
 
     return render(
         request,
