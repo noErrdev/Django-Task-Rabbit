@@ -1,7 +1,17 @@
+import requests
+import stripe
+import firebase_admin
+
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .forms import UserProfileForm, BasicCustomerForm, JobCreationForm, JobPickupForm, JobDeliveryForm
+from .forms import (
+    UserProfileForm,
+    BasicCustomerForm,
+    JobCreationForm,
+    JobPickupForm,
+    JobDeliveryForm,
+)
 from ..models import Job
 
 from django.conf import settings
@@ -9,7 +19,6 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
-import firebase_admin
 from firebase_admin import credentials, auth
 
 if settings.DEBUG == True:
@@ -19,11 +28,12 @@ elif settings.DEBUG == False:
     cred = credentials.Certificate(settings.FIREBASE_ADMIN_CREDENTIALS_DICT)
     firebase_admin.initialize_app(cred)
 
-import stripe
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+
 profile_namespace = "customer:profile"
+create_job_namespace = "customer:create_job"
 
 
 @login_required
@@ -137,18 +147,41 @@ def customer_create_job(request):
                 created_jobs = job_creation_form.save(commit=False)
                 created_jobs.customer = current_customer
                 created_jobs.save()
-                return redirect(reverse("customer:create_job"))
+                return redirect(reverse(create_job_namespace))
         elif request.POST.get("step") == "2":
             job_pickup_form = JobPickupForm(request.POST, instance=created_jobs)
             if job_pickup_form.is_valid():
                 created_jobs = job_pickup_form.save()
-                return redirect(reverse("customer:create_job"))
+                return redirect(reverse(create_job_namespace))
         elif request.POST.get("step") == "3":
             job_delivery_form = JobDeliveryForm(request.POST, instance=created_jobs)
             if job_delivery_form.is_valid():
                 created_jobs = job_delivery_form.save()
-                return redirect(reverse("customer:create_job"))
-            
+                try:
+                    url = (
+                        "https://maps.googleapis.com/maps/api/distancematrix/json?origins="
+                        + created_jobs.pickup_address
+                        + "&destinations="
+                        + created_jobs.delivery_address
+                        + "&mode=transit&key="
+                        + settings.DISTANCE_MATRIX_API_KEY
+                    )
+                    url = url.replace(" ", "") 
+                    r = requests.get(url, headers={}, data={})
+
+                    distance = r.json()["rows"][0]["elements"]["value"]
+                    duration = r.json()["rows"][0]["duration"]["value"]
+
+                    created_jobs.distance = round(distance / 1000, 2)
+                    created_jobs.duration = int(duration / 60)
+                    created_jobs.price = created_jobs.distance * 1
+
+                    created_jobs.save()
+                except Exception as e:
+                    print(e)
+                    messages.error(request, 'Unfortunately, we do not support delivery for your location!')
+                return redirect(reverse(create_job_namespace))
+
 
     if not created_jobs:
         current_step = 1
@@ -158,6 +191,7 @@ def customer_create_job(request):
         current_step = 3
     else:
         current_step = 2
+
 
     return render(
         request,

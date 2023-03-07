@@ -140,6 +140,15 @@
                   </form>
                 </div>
                 <div class="tab-pane {% if current_step == 4 %}active{% endif %}" id="payment" role="tabpanel" aria-labelledby="job-payment-tab">
+                  {% if messages %}
+                    {% for message in messages  %}
+                      <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-4" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>{{ messages }}</strong>
+                      </div>
+                      
+                    {% endfor %}
+                  {% endif %}
                   <p style="font-size: 18px">Enter the Payment Information</p>
                 </div>
               </div>
@@ -240,6 +249,16 @@
       src="https://maps.googleapis.com/maps/api/js?key={% get_env_var 'MAPS_API_KEY' %}&callback=initMap&libraries=places&v=weekly"
       async defer
     ></script>
+  <script>
+      let alertListBtn = document.querySelectorAll('.alert > button');
+      alertListBtn.forEach((btn) => {
+        if (btn !== null) {
+          setTimeout(() => {
+              btn.click() 
+          }, 6000)
+        }
+      })
+  </script>
   
 {% endblock main %}
 
