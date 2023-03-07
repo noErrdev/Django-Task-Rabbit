@@ -5,6 +5,9 @@ import firebase_admin
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .forms import (
     UserProfileForm,
     BasicCustomerForm,
@@ -281,3 +284,13 @@ def customer_archived_jobs(request):
         ]
     )
     return render(request, "customer/archived-jobs.html", { "jobs": jobs })
+
+
+class JobDetailView(LoginRequiredMixin, DetailView):
+    login_url="/sign-in/?next=/customer/"
+    model = Job
+    template_name = "customer/job-details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context

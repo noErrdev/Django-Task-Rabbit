@@ -1,0 +1,12 @@
+{% extends 'customer/base.html' %}
+
+{% block title %}
+   <title>{{ object.name }} | Task Rabbit</title> 
+{% endblock title %}
+
+{% block main %}
+    <h4>
+        {{ object.name }}
+    </h4>
+    <p>{{ object.description }}</p>
+{% endblock main %}
