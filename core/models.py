@@ -78,6 +78,9 @@ class Job(models.Model):
 
     def __str__(self):
         return self.description
+
+    def get_status_display(self):
+        return self.status
     
 class Transaction(models.Model):
     stripe_payment_intent_id =  models.CharField(max_length=255, unique=True)
