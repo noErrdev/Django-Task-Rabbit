@@ -225,6 +225,15 @@ def customer_create_job(request):
                     print("Code is: %s" % err.code)
                     payment_intent_id = err.payment_intent["id"]
                     payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+                    messages.error(
+
+                        request,
+
+                        "Oops, something went wrong! Try again!",
+
+                    )
+
+                return redirect(reverse (create_job_namespace))
 
     if not created_jobs:
         current_step = 1
