@@ -128,12 +128,27 @@ def customer_payment(request):
 def customer_create_job(request):
     current_customer = request.user.customer
     current_step = 0
+
     if not current_customer.stripe_payments_method_id:
         return redirect(reverse("customer:payment"))
+    
+    has_current_job = Job.objects.filter(
+        customer=current_customer,
+        status__in=[
+            Job.PROCESSING,
+            Job.PICKING,
+            Job.DELIVERING
+        ]
+    ).exists()
+
+    if has_current_job:
+        messages.warning(request, "You currently have a processing job!")
+        return redirect(reverse("customer:current_jobs"))
 
     created_jobs = Job.objects.filter(
         customer=current_customer, status=Job.CREATING
     ).last()
+
     job_creation_form = JobCreationForm(instance=created_jobs)
     job_pickup_form = JobPickupForm(instance=created_jobs)
     job_delivery_form = JobDeliveryForm(instance=created_jobs)
@@ -222,7 +237,7 @@ def customer_create_job(request):
 
     return render(
         request,
-        "customer/create_job.html",
+        "customer/create-job.html",
         {
             "job_creation_form": job_creation_form,
             "job_pickup_form": job_pickup_form,
@@ -231,3 +246,29 @@ def customer_create_job(request):
             "current_step": current_step,
         },
     )
+
+
+@login_required(login_url="/sign-in/?next=/customer/")
+def customer_current_jobs(request):
+    current_customer = request.user.customer
+    jobs = Job.objects.filter(
+        customer=current_customer,
+        status__in=[
+            Job.PICKING,
+            Job.PROCESSING,
+            Job.DELIVERING
+        ]
+    )
+    return render(request, "customer/current-jobs.html", { "jobs": jobs })
+
+@login_required(login_url="/sign-in/?next=/customer/")
+def customer_archived_jobs(request):
+    current_customer = request.user.customer
+    jobs = Job.objects.filter(
+        customer=current_customer,
+        status__in=[
+            Job.COMPLETED,
+            Job.CANCELLED
+        ]
+    )
+    return render(request, "customer/archived-jobs.html", { "jobs": jobs })
