@@ -4,9 +4,110 @@
    <title>{{ object.name }} | Task Rabbit</title> 
 {% endblock title %}
 
+{% block head %}
+    <style>
+        .photo {
+            object-fit: cover;
+        }
+        .photo-blank {
+            border: 2px dashed #DFDFDF;
+            height: 130px;
+            width: 130px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+{% endblock head %}
+
+
+
 {% block main %}
-    <h4>
-        {{ object.name }}
-    </h4>
-    <p>{{ object.description }}</p>
+    <button onclick="history.back()" type="button" class="btn btn-outline-warning mb-4">< Go back</button>
+    <div class="media mb-4 d-flex">
+        <img style="border-radius: 12px; margin-right: 24px" width="150px" height="150px" src="{{ object.photo.url }}" alt="Image for the job: {{ object.description }}">
+        <div class="media-body">
+            <h3>{{ object.name }}</h3>
+            <p style="font-size: 18px; font-weight: 500;" class="text-secondary">{{ object.description }}</p>
+
+            <div class="d-flex">
+                <div class="col-g-3 flex flex-col">
+                    <small style="font-size: 16px;" class="text-secondary">CATEGORY</small>
+                    <br>
+                    <span><b>{{ object.category.name }}</b></span>
+                </div>
+                <div style="margin-left: 16px;" class="col-g-3 flex flex-col">
+                    <small style="font-size: 16px;" class="text-secondary">SIZE OF WORK</small>
+                    <br>
+                    <span><b>{{ object.get_size_display }}</b></span>
+                </div>
+                <div style="margin-left: 16px;" class="col-g-3">
+                    <small style="font-size: 16px;" class="text-secondary">PRICE</small>
+                    <br>
+                    <span><b>${{ object.price }}</b></span>
+                </div>
+                <div style="margin-left: 16px;" class="col-g-3">
+                    <small style="font-size: 16px" class="text-secondary">QUANTITY</small>
+                    <br>
+                    <span><b>{{ object.quantity }}</b></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <b class="text-secondary" style="font-size: 18px;">DELIVERY INFORMATION</b>
+    <br>
+    <div class="card bg-white mt-2 mb-5">
+        <div class="card-body p-4">
+            <h4 class="mb-3">
+                Pickup
+            </h4>
+            <div class="row">
+                <div class="col-lg-4">
+                    <b>Address</b><br>
+                    <span>{{ object.pickup_address }}</span>
+                </div>
+                <div class="col-lg-4">
+                    <b>{{ object.pickup_name }}</b><br>
+                    <span>{{ object.pickup_phone_number }}</span>
+                </div>
+                <div id="pickup_photo" class="col-lg-4">
+                    {% if object.pickup_photo %}
+                        <img style="border-radius: 12px;" class="photo" width="130" height="13" src="{{ object.pickup_photo.url }}" alt="Image for the pickup">
+                    {% else %}
+                        <div class="photo-blank">
+                            Pickup photo will appear here
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <hr class="my-4">
+
+            <h4 class="mb-3">
+                Delivery
+            </h4>
+            <div class="row">
+                <div class="col-lg-4">
+                    <b>Address</b><br>
+                    <span>{{ object.delivery_address }}</span>
+                </div>
+                <div class="col-lg-4">
+                    <b>{{ object.delivery_name }}</b><br>
+                    <span>{{ object.delivery_phone_number }}</span>
+                </div>
+                <div id="delivery_photo" class="col-lg-4">
+                    {% if object.delivery_photo %}
+                        <img style="border-radius: 12px;" class="photo" width="130" height="13" src="{{ object.delivery_photo.url }}" alt="Image for the pickup">
+                    {% else %}
+                        <div class="photo-blank">
+                            Delivery photo will appear here
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
 {% endblock main %}

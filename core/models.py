@@ -89,6 +89,9 @@ class Job(models.Model):
     def get_status_display(self):
         return self.status
     
+    def get_size_display(self):
+        return self.size.capitalize()
+    
     def get_absolute_url(self):
         return reverse("customer:job_details", kwargs={"pk": self.pk})
 
