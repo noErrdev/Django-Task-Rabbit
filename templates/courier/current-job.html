@@ -71,6 +71,23 @@
         </div>
     </div>
     <script>
+        function updateCourierPosition(map) {
+            navigator.geolocation.watchPosition(pos => {
+                let courierPosition = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
+                console.log(courierPosition)
+                if (!window.courierMarker) {
+                    window.courierMarker = new google.maps.Marker({
+                        position: courierPosition,
+                        map,
+                    })
+                } else {
+                    window.courierMarker.setPosition(courierPosition)
+                }
+                map.panTo(courierPosition)
+            }, pos => console.log(pos))
+
+        }
+
         function initMap() {
             var directionsService = new google.maps.DirectionsService();
             var directionsRenderer = new google.maps.DirectionsRenderer();
@@ -93,6 +110,7 @@
             });
             directionsRenderer.setMap(map);
             
+            updateCourierPosition(map)
         }
 
        
