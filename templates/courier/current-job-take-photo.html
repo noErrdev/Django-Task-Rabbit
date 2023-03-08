@@ -1,0 +1,50 @@
+{% extends 'courier/base.html' %}
+
+{% block title %}
+    <title>Camera | Task Rabbit</title>
+{% endblock title %}
+
+{% block head %}
+    <style>
+        body {
+            background-color: #121212;
+        }
+        .btn-back {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+
+        }
+        .buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+        #take-photo {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+<div id="take-photo">
+    <video src="" id="webcam" autoplay playsinline></video>
+    <canvas id="canvas" class="d-none"></canvas>
+
+    <a href="{% url 'courier:current_job' %}" class="btn-back">
+        <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"/></svg>
+    </a>
+
+    <div class="buttons">
+        <a style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="" >Take Pickup Photo</a>
+    </div>
+</div>
+{% endblock content %}

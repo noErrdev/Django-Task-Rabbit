@@ -42,5 +42,18 @@ def courier_current_job(request):
     return render(request, "courier/current-job.html", { "job": job })
 
 
+@login_required(login_url="/sign-in/?next=/courier/")
+def courier_current_job_camera(request, pk):
+    job = Job.objects.filter(
+        id=pk,
+        courier=request.user.courier, 
+        status__in=[
+            Job.PICKING,
+            Job.DELIVERING
+        ]
+    ).last()
+    if not job:
+        return redirect(reverse('courier:current_job'))
+    return render(request, "courier/current-job-take-photo.html", { "job": job })
 
                 
