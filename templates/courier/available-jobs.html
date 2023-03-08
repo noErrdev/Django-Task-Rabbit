@@ -31,7 +31,7 @@
     {% include 'courier/partials/bottom-navbar.html' %}
     <div class="d-flex flex-column h-100" style="padding-bottom: 60px">
         <div id="map"></div>
-        <div id="job-details" class="card">
+        <div style="cursor: pointer;" id="job-details" class="card">
             <div class="card-body p-4">
                 <div class="media d-flex">
                     <img src="" alt="" width="50px" height="50px" id="job-photo" style="border-radius: 12px; margin-right: 24px">
@@ -93,6 +93,9 @@
             job_duration_el.innerHTML = job.duration
             job_distance_el.innerHTML = job.distance
             job_price_el.innerHTML = "$" + job.price  
+            job_details_el.addEventListener('click', () => {
+                window.location.href = `/courier/jobs/${job.id}/`
+            })
         }
         function initMap() {
             var mapOptions = {

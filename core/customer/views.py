@@ -15,7 +15,8 @@ from .forms import (
     JobPickupForm,
     JobDeliveryForm,
 )
-from ..models import Job, Transaction
+
+from core.models import Job, Transaction
 
 from django.conf import settings
 from django.contrib import messages
