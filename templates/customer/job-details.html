@@ -1,4 +1,5 @@
 {% extends 'customer/base.html' %}
+{% load get_env %}
 
 {% block title %}
    <title>{{ object.name }} | Task Rabbit</title> 
@@ -20,9 +21,48 @@
             text-align: center;
             padding: 10px;
         }
+        .controls {
+            margin-top: 10px;
+            border: 1px solid transparent;
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            height: 32px;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #origin-input,
+        #destination-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 200px;
+        }
+
+        #origin-input:focus,
+        #destination-input:focus {
+        border-color: #4d90fe;
+        }
+
+        #mode-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        margin-left: 12px;
+        padding: 5px 11px 0px 11px;
+        }
+
+        #mode-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+        }
     </style>
 {% endblock head %}
-
 
 
 {% block main %}
@@ -110,4 +150,49 @@
 
         </div>
     </div>
+    <div class="d-flex justify-content-between">
+        <b class="text-secondary" style="font-size: 18px">TRACK DELIVERY</b>
+        
+        <div class="mb-2">
+            <span style="width: fit-content;" class="badge rounded-pill bg-warning text-black">{{ object.get_status_display }}</span>
+        </div>
+    </div>
+    <div class="card bg-white mt-2">
+        <input class="form-control" id="pickup_address_input" value="{{ object.pickup_address }}" type="hidden">
+        <input class="form-control" id="delivery_address_input" value="{{ object.delivery_address }}" type="hidden">
+        <div id="map" style="height: 500px;"></div>
+    </div>
+    
+    <script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer();
+            var mapOptions = {
+                zoom:7,
+                center: { lat: 6.465422, lng: 3.406448 },
+            }
+            var start = "{{ object.pickup_address }}";
+            var end = "{{ object.delivery_address }}";
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING'
+            };
+            directionsService.route(request, function(result, status) {
+                if (status == 'OK') {
+                    directionsRenderer.setDirections(result);
+                }
+            });
+            directionsRenderer.setMap(map);
+            
+        }
+
+       
+        window.initMap = initMap;
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={% get_env_var 'MAPS_API_KEY' %}&callback=initMap&libraries=places&v=weekly"
+      async defer
+    ></script>
 {% endblock main %}
