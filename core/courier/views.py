@@ -11,4 +11,3 @@ def courier_index(request):
 @login_required(login_url="/sign-in/?next=/courier/")
 def courier_available_jobs(request):
     return render(request, "courier/available-jobs.html")
-
