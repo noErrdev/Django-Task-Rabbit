@@ -65,8 +65,22 @@
 {% endblock head %}
 
 
+
 {% block main %}
-    <button onclick="history.back()" type="button" class="btn btn-outline-warning mb-4">< Go back</button>
+    <div class="d-flex">
+        <button onclick="history.back()" type="button" class="btn btn-outline-warning mb-4">
+            <span style="color: #121212">
+                Go back
+            </span> 
+        </button>
+        {% if object.get_status_display == "processing" %}
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="job_id" value="{{ object.id }}">
+                <button style="margin-left: 12px;" class="btn btn-warning" type="submit">Cancel Job</button>
+            </form>
+        {% endif %}
+    </div>
     <div class="media mb-4 d-flex">
         <img style="border-radius: 12px; margin-right: 24px" width="150px" height="150px" src="{{ object.photo.url }}" alt="Image for the job: {{ object.description }}">
         <div class="media-body">

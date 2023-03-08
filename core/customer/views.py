@@ -2,7 +2,7 @@ import requests
 import stripe
 import firebase_admin
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView
@@ -229,14 +229,11 @@ def customer_create_job(request):
                     payment_intent_id = err.payment_intent["id"]
                     payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
                     messages.error(
-
                         request,
-
                         "Oops, something went wrong! Try again!",
-
                     )
 
-                return redirect(reverse (create_job_namespace))
+                return redirect(reverse(create_job_namespace))
 
     if not created_jobs:
         current_step = 1
@@ -294,3 +291,13 @@ class JobDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def post(self, request, *args, **kwargs):
+        if request.method == "POST":
+            job_id = request.POST.get('job_id')
+            job = get_object_or_404(Job, pk=job_id)
+            if job.status == Job.PROCESSING:
+                job.status = Job.CANCELLED
+                job.save()
+                return redirect(reverse("customer:archived_jobs"))
+                
