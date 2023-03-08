@@ -13,7 +13,7 @@ import core.courier.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", index),
-    path("login/", LoginView.as_view(template_name="login.html"), name='login'),
+    path("sign-in/", LoginView.as_view(template_name="login.html"), name='login'),
     path("logout/", LogoutView.as_view(next_page="/"), name='logout'),
     path("sign-up", sign_up, name='sign_up'),
     path("customer/", include(core.customer.urls, namespace="customer")),

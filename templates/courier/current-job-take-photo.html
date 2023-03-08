@@ -1,10 +1,13 @@
 {% extends 'courier/base.html' %}
+{% load static %}
 
 {% block title %}
     <title>Camera | Task Rabbit</title>
 {% endblock title %}
 
 {% block head %}
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+    {% comment %} <script type="text/javascript" src="{% static 'js/webcam-easy.min.js' %}"></script> {% endcomment %}
     <style>
         body {
             background-color: #121212;
@@ -27,6 +30,11 @@
             display: flex;
             align-items: center;
         }
+        #upload {
+            height: 100%;
+            display: none;
+            align-items: center;
+        }
         video {
             width: 100%;
             height: auto;
@@ -35,16 +43,35 @@
 {% endblock head %}
 
 {% block content %}
-<div id="take-photo">
-    <video src="" id="webcam" autoplay playsinline></video>
-    <canvas id="canvas" class="d-none"></canvas>
-
-    <a href="{% url 'courier:current_job' %}" class="btn-back">
-        <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"/></svg>
-    </a>
-
-    <div class="buttons">
-        <a style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="" >Take Pickup Photo</a>
+    <div id="upload">
+        <img src="" alt="" id="photo">
+        <div class="buttons">
+            <a id="retake-button" class="btn btn-light" href="javascript:void(retake_photo())">Retake photo</a>
+            <a id="retake-button" class="btn btn-light" href="javascript:void(retake_photo())">Retake photo</a>
+        </div>
     </div>
-</div>
+    <div id="take-photo">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="canvas" class="d-none"></canvas>
+        <audio id="snapSound" src="{% static 'audio/snap.wav' %}" preload = "auto"></audio>
+
+        <a href="{% url 'courier:current_job' %}" class="btn-back">
+            <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"/></svg>
+        </a>
+
+        <div class="buttons">
+            <a style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(take_photo())" >Take Pickup Photo</a>
+        </div>
+    </div>
+    <script>
+        const webcamElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('canvas');
+        const snapSoundElement = document.getElementById('snapSound');
+        const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+        webcam.start()
+        function take_photo() {
+            var picture = webcam.snap();
+            webcam.stop();
+        }
+    </script>
 {% endblock content %}
