@@ -1,0 +1,37 @@
+{% extends 'courier/base.html' %}
+{% load get_env %}
+
+{% block title %}
+    <title>Courier | Task Rabbit</title>
+{% endblock title %}
+
+{% block head %}
+    <style>
+        #map {
+            flex: 1;
+        }
+    </style>
+{% endblock head %}
+
+
+{% block content %}
+    {% include 'courier/partials/bottom-navbar.html' %}
+    <div class="d-flex flex-column h-100" style="padding-bottom: 60px">
+        <div id="map"></div>
+    </div>
+    <script>
+        function initMap() {
+            var mapOptions = {
+                zoom: 13,
+                center: { lat: 6.465422, lng: 3.406448 },
+            }
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions); 
+        }
+        window.initMap = initMap;
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={% get_env_var 'MAPS_API_KEY' %}&callback=initMap&libraries=places&v=weekly"
+      async defer
+    ></script>
+{% endblock content %}
+

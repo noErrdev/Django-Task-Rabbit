@@ -60,20 +60,14 @@
     
     {% block content %}{% endblock content %}
 
-    <footer class="text-center mt-5 mb-5" >
-        &copy; Taskrabbit 2023
-    </footer>
 
-    {% comment %} <script>
-        const toasts = document.querySelectorAll('div[role="alert"]')
-        if (toasts != null) {
-            toasts.forEach((toast) => {
-                toast.style.display = 'fixed'
-                toast.style.left = "50px"
-                toast.style.bottom = '60px'
-                setTimeout(() => { toast.style.display = 'none' }, 2000 )
-            })
-        }
-    </script> {% endcomment %}
+    <footer style="position: relative; top: 30vh; padding-bottom: 20px;" class="text-center">
+       <p>
+           &copy; Taskrabbit 2023
+       </p> 
+       <p>
+           Made with ❤️ & ☕ by Daniel Brai
+       </p>
+    </footer>
 </body>
 </html>
