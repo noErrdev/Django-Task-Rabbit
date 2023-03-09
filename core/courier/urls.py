@@ -6,6 +6,7 @@ from .views import (
     courier_current_job,
     courier_current_job_camera,
     courier_job_completed,
+    courier_archived_jobs
 )
 from .apis import courier_available_jobs_api, courier_current_job_update_api
 
@@ -16,6 +17,7 @@ urlpatterns = [
     path("jobs/", courier_available_jobs, name="available_jobs"),
     path("jobs/current/", courier_current_job, name="current_job"),
     path("jobs/completed/", courier_job_completed, name="completed_job"),
+    path("jobs/archived/", courier_archived_jobs, name="archived_jobs"),
     path("jobs/<str:pk>/", courier_available_job, name="available_job_details"),
     path(
         "jobs/current/<str:pk>/camera",

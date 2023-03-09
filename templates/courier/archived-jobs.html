@@ -1,22 +1,14 @@
 {% extends 'courier/base.html' %}
-{% load static %}
-{% load get_env %}
 
 {% block title %}
-    <title>My Jobs | Task Rabbit</title>
+    <title>My Archived Jobs | Task Rabbit</title>
 {% endblock title %}
 
 {% block head %}
     <style>
-        #map {
-            flex: 1;
-        }
         small {
             font-size: 12px;
             line-height: 1.2rem;
-        }
-        .card {
-            border: none;
         }
     </style>
 {% endblock head %}
@@ -26,17 +18,18 @@
     {% include 'courier/partials/bottom-navbar.html' %}
     <div class="d-flex flex-column h-100" style="padding-bottom: 60px">
         <div class="text-center mt-1 mb-1 align-items-center" role="group">
-            <a href="{% url 'courier:current_job' %}" class="btn btn-warning">Current Job</a>
-            <a href="{% url 'courier:archived_jobs' %}" class="btn btn-outline-warning">Archived Jobs</a>
+            <a href="{% url 'courier:current_job' %}" class="btn btn-outline-warning">Current Job</a>
+            <a href="{% url 'courier:archived_jobs' %}" class="btn btn-warning">Archived Jobs</a>
         </div>
-        {% if job %}
-            <div id="map"></div>
-            <div class="card">
-                <div class="card-body p-4">
+        {% if jobs %}
+            {% for job in jobs  %}
+            <div style="border: 1.5px solid rgba(0, 0, 0, 0.1); border-radius: 8px;" class="card mx-auto mt-4">
+                <div class="card-body p-4 justify-content-center">
                     <div class="media d-flex">
                         <img src="{{ job.photo.url }}" alt="" width="50px" height="50px" style="border-radius: 12px; margin-right: 24px">
                         <div class="media-body ml-4">
-                            <b>{{ job.name }}</b>
+                            <b style="font-size: 20px">{{ job.name }}</b>
+                            <span style="font-size: 10px;font-weight: 500;background-color: orange;margin-left: 12px;padding:1.5px 6px;border-radius: 12px;">{{ job.get_status_display }}</span>
                             <div class="d-flex justify-content-between">
                                 <div class="flex-grow-1 mr-2">
                                     <small class="text-success">
@@ -72,77 +65,18 @@
                             </div>
                         </div>
                     </div>
-                    <a href="{% url 'courier:current_job_camera' job.id %}" class="btn btn-block btn-warning w-100 mt-2">
-                        {% if job.get_status_display == 'picking' %}
-                            Pickup
-                        {% else %}
-                            Drop-off
-                        {% endif %}
-                    </a>
                 </div>
             </div>
+            {% endfor %}
         {% else %}
             <div class="d-flex justify-content-center align-items-center text-center h-100" id="main">
                 <p style="font-size: 20px;">
-                    You have no current job! Let's pick a job
+                    You have no archived jobs! Let's pick a job
                 </p>
             </div>
         {% endif %}
     </div>
-    <script>
-        function updateCourierPosition(map) {
-            navigator.geolocation.watchPosition(pos => {
-                let courierPosition = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
-                if (!window.courierMarker) {
-                    window.courierMarker = new google.maps.Marker({
-                        position: courierPosition,
-                        map,
-                    })
-                } else {
-                    window.courierMarker.setPosition(courierPosition)
-                }
-                map.panTo(courierPosition)
-            }, pos => console.log(pos))
-
-        }
-
-        function initMap() {
-            if (!document.getElementById('map')) {
-                return;
-            }
-
-            var directionsService = new google.maps.DirectionsService();
-            var directionsRenderer = new google.maps.DirectionsRenderer();
-            var mapOptions = {
-                zoom:5,
-                center: { lat: 6.465422, lng: 3.406448 },
-            }
-            var start = "{{ job.pickup_address }}";
-            var end = "{{ job.delivery_address }}";
-            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-            var request = {
-                origin: start,
-                destination: end,
-                travelMode: 'DRIVING'
-            };
-            directionsService.route(request, function(result, status) {
-                if (status == 'OK') {
-                    directionsRenderer.setDirections(result);
-                }
-            });
-            directionsRenderer.setMap(map);
-            
-            updateCourierPosition(map)
-        }
-
-       
-        window.initMap = initMap;
-    </script>
-    {% if job %}
-        <script
-        src="https://maps.googleapis.com/maps/api/js?key={% get_env_var 'MAPS_API_KEY' %}&callback=initMap&libraries=places&v=weekly"
-        async defer
-        ></script>
-    {% endif %}
 {% endblock content %}
+
+
 

@@ -54,3 +54,9 @@ def courier_current_job_camera(request, pk):
 @login_required(login_url="/sign-in/?next=/courier/")
 def courier_job_completed(request):
     return render(request, "courier/completed-job.html")
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def courier_archived_jobs(request):
+    jobs = Job.objects.filter(courier=request.user.courier, status=Job.COMPLETED)
+    return render(request, "courier/archived-jobs.html", {"jobs": jobs})
