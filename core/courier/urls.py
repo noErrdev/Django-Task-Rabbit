@@ -7,7 +7,8 @@ from .views import (
     courier_current_job,
     courier_current_job_camera,
     courier_job_completed,
-    courier_archived_jobs
+    courier_archived_jobs,
+    courier_payment_method,
 )
 from .apis import courier_available_jobs_api, courier_current_job_update_api
 
@@ -16,6 +17,7 @@ app_name = "courier"
 urlpatterns = [
     path("", courier_index, name="home"),
     path("profile/", courier_profile, name="profile"),
+    path("payment/", courier_payment_method, name="payment"),
     path("jobs/", courier_available_jobs, name="available_jobs"),
     path("jobs/current/", courier_current_job, name="current_job"),
     path("jobs/completed/", courier_job_completed, name="completed_job"),

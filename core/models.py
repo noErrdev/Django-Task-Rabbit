@@ -19,7 +19,8 @@ class Customer(models.Model):
 
 class Courier(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=300, blank=True, default="courier address")
+    paypal_email = models.EmailField(max_length=255, blank=True)
+    address = models.CharField(max_length=300, blank=True)
     latitude = models.FloatField(blank=True, default=0)
     longtitude = models.FloatField(blank=True, default=0)
 
@@ -78,7 +79,7 @@ class Job(models.Model):
     photo = models.ImageField(upload_to="job/photos/")
     created_at = models.DateTimeField(default=timezone.now)
 
-    pickup_address = models.CharField(max_length=300, blank=True, default="job address")
+    pickup_address = models.CharField(max_length=300, blank=True)
     pickup_latitude = models.FloatField(default=0, blank=True, null=True)
     pickup_longtitude = models.FloatField(default=0, blank=True, null=True)
     pickup_name = models.CharField(max_length=300, blank=True)

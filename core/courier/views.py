@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.views.generic import DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 from core.models import Job
+from .forms import PaymentForm
 
 available_jobs_namespace = "courier:available_jobs"
 
@@ -31,6 +31,21 @@ def courier_profile(request):
             "total_distance": total_distance,
         },
     )
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def courier_payment_method(request):
+    payment_form = PaymentForm(instance=request.user.courier)
+
+    if request.method == "POST":
+        payment_form = PaymentForm(request.POST, instance=request.user.courier)
+        if payment_form.is_valid():
+            payment_form.save()
+            messages.success(
+                request, "Your payment email has been successfully updated!"
+            )
+            return redirect(reverse("courier:profile"))
+    return render(request, "courier/payment.html", {"payment_form": payment_form})
 
 
 @login_required(login_url="/sign-in/?next=/courier/")

@@ -78,7 +78,7 @@
     <script>
         const go_back_btn = document.getElementById('go_back_btn')
         go_back_btn?.addEventListener('click', () => {
-            window.location.href = '/courier/jobs/'
+            window.location.href = "{% url 'courier:available_jobs' %}"
         })
     </script>
 {% endblock content %}
