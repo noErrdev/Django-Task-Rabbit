@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    <title>Camera | Task Rabbit</title>
+    <title>Pickup Camera | Task Rabbit</title>
 {% endblock title %}
 
 {% block head %}
@@ -44,10 +44,10 @@
 
 {% block content %}
     <div id="upload">
-        <img src="" alt="" id="photo">
+        <img src="" alt="Pickup Photo" id="photo">
         <div class="buttons">
-            <a id="retake-button" class="btn btn-light" href="javascript:void(retake_photo())">Retake photo</a>
-            <a id="retake-button" class="btn btn-light" href="javascript:void(retake_photo())">Retake photo</a>
+            <a id="retake-button" style="padding: 8px 8px; background: white; text-decoration: none; color: black" href="javascript:void(retake_photo())">Retake Photo</a>
+            <a id="upload-button" style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(upload_photo())">Upload Pickup Photo</a>
         </div>
     </div>
     <div id="take-photo">
@@ -71,7 +71,16 @@
         webcam.start()
         function take_photo() {
             var picture = webcam.snap();
-            webcam.stop();
+            document.getElementById('photo').setAttribute('src', picture)
+            document.getElementById('take-photo').style.display = "none"
+            document.getElementById('upload').style.display = "flex"
+        }
+        function retake_photo() {
+            document.getElementById('take-photo').style.display = "flex"
+            document.getElementById('upload').style.display = "none"
+        }
+        function upload_photo() {
+
         }
     </script>
 {% endblock content %}
