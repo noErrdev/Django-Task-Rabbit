@@ -1,0 +1,52 @@
+{% extends 'courier/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Courier Profile | Task Rabbit</title>
+{% endblock title %}
+
+{% block content %}
+    {% include 'courier/partials/bottom-navbar.html' %}
+    <div class="media d-flex align-items-center bg-warning p-3">
+        <img class="rounded-cirle" width="60" height="60" src="{% static 'images/avatar.png' %}" alt="Your avatar image">
+        <div style="margin-left: 20px;" class="media-body">
+            <h4 class="mb-0">{{ request.user.get_full_name }}</h4>
+        </div>
+    </div>
+    <div class="px-4">
+        <div class="mt-2 p-2">
+            <b class="text-secondary">SUMMARY</b>
+            <hr>
+            <div class="d-flex text-center">
+                <div class="flex-grow-1">
+                    <h4 class="text-success">${{ total_earnings }}</h4>
+                    <span class="text-secondary">Earned</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-success">
+                        {{ total_jobs }} 
+                        {% if total_jobs > 1 %} 
+                            Jobs 
+                        {% else %}
+                            Job
+                        {% endif %}
+                    </h4>
+                    <span class="text-secondary">Completed</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-danger">{{ total_distance }} Km</h4>
+                    <span class="text-secondary">Driven</span>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="p-2">
+            <a href="{% url 'logout' %}" class="btn btn-danger w-100 btn-md mt-2">
+                <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="m2 12 5 4v-3h9v-2H7V8z"/><path d="M13.001 2.999a8.938 8.938 0 0 0-6.364 2.637L8.051 7.05c1.322-1.322 3.08-2.051 4.95-2.051s3.628.729 4.95 2.051 2.051 3.08 2.051 4.95-.729 3.628-2.051 4.95-3.08 2.051-4.95 2.051-3.628-.729-4.95-2.051l-1.414 1.414c1.699 1.7 3.959 2.637 6.364 2.637s4.665-.937 6.364-2.637c1.7-1.699 2.637-3.959 2.637-6.364s-.937-4.665-2.637-6.364a8.938 8.938 0 0 0-6.364-2.637z"/></svg>
+                Sign out
+            </a>
+        </div>
+    </div>
+
+{% endblock content %}
+

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from core.models import *
+from core.models import Job
 
 available_jobs_namespace = "courier:available_jobs"
 
@@ -12,6 +12,25 @@ available_jobs_namespace = "courier:available_jobs"
 @login_required(login_url="/sign-in/?next=/courier/")
 def courier_index(request):
     return redirect(reverse(available_jobs_namespace))
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def courier_profile(request):
+    jobs = Job.objects.filter(courier=request.user.courier, status=Job.COMPLETED)
+    total_earnings = sum(job.price for job in jobs) * 0.7
+    total_earnings = round(total_earnings, 2)
+    total_jobs = len(jobs)
+    total_distance = sum(job.distance for job in jobs)
+    return render(
+        request,
+        "courier/profile.html",
+        {
+            "jobs": jobs,
+            "total_earnings": total_earnings,
+            "total_jobs": total_jobs,
+            "total_distance": total_distance,
+        },
+    )
 
 
 @login_required(login_url="/sign-in/?next=/courier/")

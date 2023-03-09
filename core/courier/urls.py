@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     courier_index,
+    courier_profile,
     courier_available_jobs,
     courier_available_job,
     courier_current_job,
@@ -14,6 +15,7 @@ app_name = "courier"
 
 urlpatterns = [
     path("", courier_index, name="home"),
+    path("profile/", courier_profile, name="profile"),
     path("jobs/", courier_available_jobs, name="available_jobs"),
     path("jobs/current/", courier_current_job, name="current_job"),
     path("jobs/completed/", courier_job_completed, name="completed_job"),
