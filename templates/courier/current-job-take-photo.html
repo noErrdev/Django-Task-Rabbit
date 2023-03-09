@@ -80,7 +80,21 @@
             document.getElementById('upload').style.display = "none"
         }
         function upload_photo() {
+            canvasElement.toBlob((blob) => {
+                let formData = new FormData()
+                formData.append('pickup_photo', blob, 'pickup_photo.png')
 
+                fetch("{% url 'courier:current_job_update_api' job.id %}", {
+                    method: "POST",
+                    body: formData,
+                }).then((res) => {
+                    return res.json()
+                }).then((data) => {
+                    if (data.success) {
+                        window.location.href = "{% url 'courier:current_job' %}"
+                    }
+                })
+            })
         }
     </script>
 {% endblock content %}
