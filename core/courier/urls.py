@@ -15,13 +15,13 @@ urlpatterns = [
     path("", courier_index, name="home"),
     path("jobs/", courier_available_jobs, name="available_jobs"),
     path("jobs/current/", courier_current_job, name="current_job"),
+    path("jobs/completed/", courier_job_completed, name="completed_job"),
     path("jobs/<str:pk>/", courier_available_job, name="available_job_details"),
     path(
         "jobs/current/<str:pk>/camera",
         courier_current_job_camera,
         name="current_job_camera",
     ),
-    path("jobs/completed/", courier_job_completed, name="completed_job"),
     path("api/jobs/", courier_available_jobs_api, name="available_jobs_api"),
     path(
         "api/jobs/current/<str:pk>/update",

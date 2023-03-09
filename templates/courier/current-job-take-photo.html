@@ -116,7 +116,7 @@
                     return res.json()
                 }).then((data) => {
                     if (data.success) {
-                        window.location.href = "{% if job.get_status_display == 'picking' %}{% url 'courier:current_job' %}{% else %}{% url 'courier:home' %}{% endif %}"
+                        window.location.href = "{% if job.get_status_display == 'picking' %}{% url 'courier:current_job' %}{% else %}{% url 'courier:completed_job' %}{% endif %}"
                     } else {
                         window.reload()
                     }
