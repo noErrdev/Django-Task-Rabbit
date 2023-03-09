@@ -73,7 +73,11 @@
                         </div>
                     </div>
                     <a href="{% url 'courier:current_job_camera' job.id %}" class="btn btn-block btn-warning w-100 mt-2">
-                        Pickup
+                        {% if job.get_status_display == 'picking' %}
+                            Pickup
+                        {% else %}
+                            Drop-off
+                        {% endif %}
                     </a>
                 </div>
             </div>

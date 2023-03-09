@@ -135,14 +135,10 @@ def customer_create_job(request):
 
     if not current_customer.stripe_payments_method_id:
         return redirect(reverse("customer:payment"))
-    
+
     has_current_job = Job.objects.filter(
         customer=current_customer,
-        status__in=[
-            Job.PROCESSING,
-            Job.PICKING,
-            Job.DELIVERING
-        ]
+        status__in=[Job.PROCESSING, Job.PICKING, Job.DELIVERING],
     ).exists()
 
     if has_current_job:
@@ -263,29 +259,22 @@ def customer_current_jobs(request):
     current_customer = request.user.customer
     jobs = Job.objects.filter(
         customer=current_customer,
-        status__in=[
-            Job.PICKING,
-            Job.PROCESSING,
-            Job.DELIVERING
-        ]
+        status__in=[Job.PICKING, Job.PROCESSING, Job.DELIVERING],
     )
-    return render(request, "customer/current-jobs.html", { "jobs": jobs })
+    return render(request, "customer/current-jobs.html", {"jobs": jobs})
+
 
 @login_required(login_url="/sign-in/?next=/customer/")
 def customer_archived_jobs(request):
     current_customer = request.user.customer
     jobs = Job.objects.filter(
-        customer=current_customer,
-        status__in=[
-            Job.COMPLETED,
-            Job.CANCELLED
-        ]
+        customer=current_customer, status__in=[Job.COMPLETED, Job.CANCELLED]
     )
-    return render(request, "customer/archived-jobs.html", { "jobs": jobs })
+    return render(request, "customer/archived-jobs.html", {"jobs": jobs})
 
 
 class JobDetailView(LoginRequiredMixin, DetailView):
-    login_url="/sign-in/?next=/customer/"
+    login_url = "/sign-in/?next=/customer/"
     model = Job
     template_name = "customer/job-details.html"
 
@@ -295,10 +284,9 @@ class JobDetailView(LoginRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         if request.method == "POST":
-            job_id = request.POST.get('job_id')
+            job_id = request.POST.get("job_id")
             job = get_object_or_404(Job, pk=job_id)
             if job.status == Job.PROCESSING:
                 job.status = Job.CANCELLED
                 job.save()
                 return redirect(reverse("customer:archived_jobs"))
-                

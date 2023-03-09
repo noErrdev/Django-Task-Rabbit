@@ -2,12 +2,18 @@
 {% load static %}
 
 {% block title %}
-    <title>Pickup Camera | Task Rabbit</title>
+    <title>
+        {% if job.get_status_display == 'picking' %}
+            Pickup
+        {% else %}
+            Drop-off
+        {% endif %}
+         Camera | Task Rabbit
+    </title>
 {% endblock title %}
 
 {% block head %}
     <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
-    {% comment %} <script type="text/javascript" src="{% static 'js/webcam-easy.min.js' %}"></script> {% endcomment %}
     <style>
         body {
             background-color: #121212;
@@ -43,11 +49,20 @@
 {% endblock head %}
 
 {% block content %}
+
     <div id="upload">
         <img src="" alt="Pickup Photo" id="photo">
         <div class="buttons">
             <a id="retake-button" style="padding: 8px 8px; background: white; text-decoration: none; color: black" href="javascript:void(retake_photo())">Retake Photo</a>
-            <a id="upload-button" style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(upload_photo())">Upload Pickup Photo</a>
+            <a id="upload-button" style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(upload_photo())">
+                Upload 
+                {% if job.get_status_display == 'picking' %}
+                    Pickup
+                {% else %}
+                    Drop-off
+                {% endif %}
+                Photo
+            </a>
         </div>
     </div>
     <div id="take-photo">
@@ -60,7 +75,15 @@
         </a>
 
         <div class="buttons">
-            <a style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(take_photo())" >Take Pickup Photo</a>
+            <a style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(take_photo())" >
+                Take 
+                {% if job.get_status_display == 'picking' %}
+                    Pickup
+                {% else %}
+                    Drop-off
+                {% endif %}
+                Photo
+            </a>
         </div>
     </div>
     <script>
@@ -82,7 +105,9 @@
         function upload_photo() {
             canvasElement.toBlob((blob) => {
                 let formData = new FormData()
-                formData.append('pickup_photo', blob, 'pickup_photo.png')
+                let upload_name = "{% if job.get_status_display == 'picking' %}pickup{% else %}delivery{% endif %}"
+                let photo_ending = "{{ job.id }}"
+                formData.append(`${upload_name}_photo`, blob, `${upload_name}_photo_${photo_ending}.png`)
 
                 fetch("{% url 'courier:current_job_update_api' job.id %}", {
                     method: "POST",
@@ -91,7 +116,9 @@
                     return res.json()
                 }).then((data) => {
                     if (data.success) {
-                        window.location.href = "{% url 'courier:current_job' %}"
+                        window.location.href = "{% if job.get_status_display == 'picking' %}{% url 'courier:current_job' %}{% else %}{% url 'courier:home' %}{% endif %}"
+                    } else {
+                        window.reload()
                     }
                 })
             })
