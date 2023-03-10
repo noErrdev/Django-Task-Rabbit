@@ -34,3 +34,4 @@ class TransactionAdmin(admin.ModelAdmin):
     
     def courier_paypal_email(self, obj):
         return obj.job.courier.paypal_email if obj.job.courier else None
+
