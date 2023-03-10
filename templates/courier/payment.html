@@ -1,0 +1,66 @@
+{% extends 'courier/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    <title>Courier Payment | Task Rabbit</title>
+{% endblock title %}
+
+{% block head %}
+    <style>
+        .header {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            background-color: #FFC106;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2)
+        }
+    </style>
+{% endblock head %}
+
+
+{% block content %}
+    {% include 'courier/partials/bottom-navbar.html' %}
+    <div class="header">
+        <span id="go_back_btn" style="margin-top: 4px; font-size: 20px; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"/></svg>
+            <span style="font-weight: bold">
+                Profile
+            </span>
+        </span>
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show w-75 mx-auto mt-4" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <strong>{{ message }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="container-fluid" style="padding-top: 40px">
+        <b style="font-size: 24px;" class="text-secondary">Enter your Paypal email</b>
+        <form style="margin-top: 24px;" method="POST">
+            {% csrf_token %}
+            {{ payment_form|crispy }}
+            <button type="submit" class="btn btn-warning">
+                Save
+            </button>
+        </form>
+    </div>
+    <script>
+        const go_back_btn = document.getElementById('go_back_btn')
+        go_back_btn?.addEventListener('click', () => {
+            window.location.href = "{% url 'courier:profile' %}"
+        })
+        let alertListBtn = document.querySelectorAll('.alert > button');
+        alertListBtn?.forEach((btn) => {
+            setTimeout(() => {
+                btn.click() 
+            }, 6000)
+        })
+    </script>
+{% endblock content %}

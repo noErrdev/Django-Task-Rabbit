@@ -1,0 +1,10 @@
+{% url 'customer:current_jobs' as current_jobs_url %}
+{% url 'customer:archived_jobs' as archived_jobs_url %}
+<ul class="nav nav-pills nav-fill mt-4">
+    <li class="nav-item">
+        <a href="{{ current_jobs_url }}" class="nav-link {% if request.path == current_jobs_url %}active{% endif %}">Current Jobs</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ archived_jobs_url }}" class="nav-link {% if request.path == archived_jobs_url %}active{% endif %}">Archived Jobs</a>
+    </li>
+</ul>

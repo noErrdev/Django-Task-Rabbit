@@ -1,0 +1,111 @@
+{% extends 'customer/base.html' %}
+{% load crispy_forms_tags %}
+{% load get_env %}
+
+{% block head %}
+    {% if not request.user.customer.stripe_payments_method_id %}
+        <script src="https://js.stripe.com/v3/"></script>
+    {% endif %}
+{% endblock head %}
+
+{% block title %}
+    <title>Payment | Task Rabbit</title>
+{% endblock title %}
+
+{% block main %}
+    {% if not request.user.customer.stripe_payments_method_id %}
+        <br>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            Let's add your credit/debit card to <strong>Create a Job</strong>!
+        </div>
+    {% endif %}
+    
+    {% if request.user.customer.stripe_payments_method_id %}
+        <br>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <strong>Card has been saved successfully!</strong>
+        </div>
+    {% endif %} 
+
+    <br>
+    <b class="text-secondary">Your Credit/Dedit card Information</b>
+    <p class="form-text text-muted">
+        Your card details are never saved in our database
+    </p>
+    <div class="card bg-white mt-2 mb-5">
+        <div class="card-body mt-2">
+            {% if request.user.customer.stripe_payments_method_id %}
+                <div id="change-card" class="input-group">
+                    <input type="text" class="form-control" value="**** **** **** {{ request.user.customer.stripe_card_last_4_digits }}" disabled >
+                    <div class="input-group-append">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Remove Card</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if not request.user.customer.stripe_payments_method_id %} 
+                <form id="payment-form" data-secret="{{ client_secret }}">
+                    <div id="payment-element">
+                        
+                    </div>
+                    <div id="error-message">
+                        
+                    </div>
+                    <br>
+                    <button class="btn btn-warning" id="submit">Save Card</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let alertListBtn = document.querySelectorAll('.alert > button');
+        alertListBtn.forEach((btn) => {
+            setTimeout(() => {
+                btn.click() 
+            }, 6000)
+        })
+    </script>
+
+    {% if not request.user.customer.stripe_payments_method_id %}
+        <script type="module">
+
+            const stripe = Stripe("{% get_env_var 'STRIPE_PUBLIC_KEY' %}");
+            const options = {
+                clientSecret: '{{ client_secret }}',
+            };
+
+            // Set up Stripe.js and Elements to use in checkout form, passing the client secret obtained in step 3
+            const elements = stripe.elements(options);
+
+            // Create and mount the Payment Element
+            const paymentElement = elements.create('payment');
+            paymentElement.mount('#payment-element');
+
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const {error} = await stripe.confirmSetup({
+                    //`Elements` instance that was used to create the Payment Element
+                    elements,
+                    confirmParams: {
+                    return_url: 'http://localhost:8000/customer/payment/',
+                    }
+                });
+
+                if (error) {
+                    const messageContainer = document.querySelector('#error-message');
+                    messageContainer.textContent = error.message;
+                } else {
+                    window.location.reload()
+                }
+            });
+        </script>
+    {% endif %}
+{% endblock main %}

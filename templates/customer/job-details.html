@@ -1,0 +1,212 @@
+{% extends 'customer/base.html' %}
+{% load get_env %}
+
+{% block title %}
+   <title>{{ object.name }} | Task Rabbit</title> 
+{% endblock title %}
+
+{% block head %}
+    <style>
+        .photo {
+            object-fit: cover;
+        }
+        .photo-blank {
+            border: 2px dashed #DFDFDF;
+            height: 130px;
+            width: 130px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+        }
+        .controls {
+            margin-top: 10px;
+            border: 1px solid transparent;
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            height: 32px;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #origin-input,
+        #destination-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 200px;
+        }
+
+        #origin-input:focus,
+        #destination-input:focus {
+        border-color: #4d90fe;
+        }
+
+        #mode-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        margin-left: 12px;
+        padding: 5px 11px 0px 11px;
+        }
+
+        #mode-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+        }
+    </style>
+{% endblock head %}
+
+
+
+{% block main %}
+    <div class="d-flex">
+        <button onclick="history.back()" type="button" class="btn btn-outline-warning mb-4">
+            <span style="color: #121212">
+                Go back
+            </span> 
+        </button>
+        {% if object.get_status_display == "processing" %}
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="job_id" value="{{ object.id }}">
+                <button style="margin-left: 12px;" class="btn btn-warning" type="submit">Cancel Job</button>
+            </form>
+        {% endif %}
+    </div>
+    <div class="media mb-4 d-flex">
+        <img style="border-radius: 12px; margin-right: 24px" width="150px" height="150px" src="{{ object.photo.url }}" alt="Image for the job: {{ object.description }}">
+        <div class="media-body">
+            <h3>{{ object.name }}</h3>
+            <p style="font-size: 18px; font-weight: 500;" class="text-secondary">{{ object.description }}</p>
+
+            <div class="d-flex">
+                <div class="col-g-3 flex flex-col">
+                    <small style="font-size: 16px;" class="text-secondary">CATEGORY</small>
+                    <br>
+                    <span><b>{{ object.category.name }}</b></span>
+                </div>
+                <div style="margin-left: 16px;" class="col-g-3 flex flex-col">
+                    <small style="font-size: 16px;" class="text-secondary">SIZE OF WORK</small>
+                    <br>
+                    <span><b>{{ object.get_size_display }}</b></span>
+                </div>
+                <div style="margin-left: 16px;" class="col-g-3">
+                    <small style="font-size: 16px;" class="text-secondary">PRICE</small>
+                    <br>
+                    <span><b>${{ object.price }}</b></span>
+                </div>
+                <div style="margin-left: 16px;" class="col-g-3">
+                    <small style="font-size: 16px" class="text-secondary">QUANTITY</small>
+                    <br>
+                    <span><b>{{ object.quantity }}</b></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <b class="text-secondary" style="font-size: 18px;">DELIVERY INFORMATION</b>
+    <br>
+    <div class="card bg-white mt-2 mb-5">
+        <div class="card-body p-4">
+            <h4 class="mb-3">
+                Pickup
+            </h4>
+            <div class="row">
+                <div class="col-lg-4">
+                    <b>Address</b><br>
+                    <span>{{ object.pickup_address }}</span>
+                </div>
+                <div class="col-lg-4">
+                    <b>{{ object.pickup_name }}</b><br>
+                    <span>{{ object.pickup_phone_number }}</span>
+                </div>
+                <div id="pickup_photo" class="col-lg-4">
+                    {% if object.pickup_photo %}
+                        <img style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.pickup_photo.url }}" alt="Image for the pickup">
+                    {% else %}
+                        <div class="photo-blank">
+                            Pickup photo will appear here
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <hr class="my-4">
+
+            <h4 class="mb-3">
+                Delivery
+            </h4>
+            <div class="row">
+                <div class="col-lg-4">
+                    <b>Address</b><br>
+                    <span>{{ object.delivery_address }}</span>
+                </div>
+                <div class="col-lg-4">
+                    <b>{{ object.delivery_name }}</b><br>
+                    <span>{{ object.delivery_phone_number }}</span>
+                </div>
+                <div id="delivery_photo" class="col-lg-4">
+                    {% if object.delivery_photo %}
+                        <img style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.delivery_photo.url }}" alt="Image for the pickup">
+                    {% else %}
+                        <div class="photo-blank">
+                            Delivery photo will appear here
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="d-flex justify-content-between">
+        <b class="text-secondary" style="font-size: 18px">TRACK DELIVERY</b>
+        
+        <div class="mb-2">
+            <span style="width: fit-content;" class="badge rounded-pill bg-warning text-black">{{ object.get_status_display }}</span>
+        </div>
+    </div>
+    <div class="card bg-white mt-2">
+        <input class="form-control" id="pickup_address_input" value="{{ object.pickup_address }}" type="hidden">
+        <input class="form-control" id="delivery_address_input" value="{{ object.delivery_address }}" type="hidden">
+        <div id="map" style="height: 500px;"></div>
+    </div>
+    
+    <script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer();
+            var mapOptions = {
+                zoom:7,
+                center: { lat: 6.465422, lng: 3.406448 },
+            }
+            var start = "{{ object.pickup_address }}";
+            var end = "{{ object.delivery_address }}";
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING'
+            };
+            directionsService.route(request, function(result, status) {
+                if (status == 'OK') {
+                    directionsRenderer.setDirections(result);
+                }
+            });
+            directionsRenderer.setMap(map);
+            
+        }
+
+       
+        window.initMap = initMap;
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={% get_env_var 'MAPS_API_KEY' %}&callback=initMap&libraries=places&v=weekly"
+      async defer
+    ></script>
+{% endblock main %}

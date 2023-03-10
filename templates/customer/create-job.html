@@ -1,0 +1,286 @@
+{% extends 'customer/base.html' %}
+{% load crispy_forms_tags %}
+{% load get_env %}
+
+{% block title %}
+    <title>Create a Job | Task Rabbit</title>
+{% endblock title %}
+
+{% block head %}
+  <style>
+    #job_pickup_map, #job_delivery_map {
+      height: 100%;
+    }
+  </style>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+{% endblock head %}
+
+{% block main %}
+  <div class="container mt-4">
+      <div class="row">
+          <div class="col-lg-4">
+              <div class="card">
+                  <div class="card-header">Job Summary</div>
+                  <div class="card-body">
+                    {% if not created_jobs %}
+                      <p>A summary of the details regarding a job is shown here</p>
+                    {% else %}
+                      {% if current_step > 1 %}
+                      <p class="text-secondary"><b>Job Details</b></p>
+                      <p><b>Created by: </b>{{ created_jobs.name }}</p>
+                      <p><b>Job description: </b>{{ created_jobs.description }}</p>
+                      {% endif %}
+
+                      {% if current_step > 2 %}
+                        <hr>
+                        <p class="text-secondary"><b>Pickup Info</b></p>
+                        <p><b>Job allocated to: </b>{{ created_jobs.pickup_name }}</p>
+                        <p><b>Job address: </b>{{ created_jobs.pickup_address }}</p>
+                      {% endif %}
+
+                      {% if current_step > 3 %}
+                        <hr>
+                        <p class="text-secondary"><b>Delivery Info</b></p>
+                        <p><b>Delivery to: </b>{{ created_jobs.delivery_name }}</p>
+                        <p><b>Delivery address: </b>{{ created_jobs.delivery_address }}</p>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-8">
+              <div class="carb mb-5">
+                  <div class="card-body">
+                      <h3 class="text-muted">
+                          Create a Job
+                      </h3>
+                      <ul class="nav nav-pills mt-4" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 1 %}active{% endif %}" id="job-info-tab" data-bs-toggle="tab" data-bs-target="#job-info" type="button" role="tab" aria-controls="job information" aria-selected="true">Job Details</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 2 %}active{% endif %}" id="job-pickup-tab" data-bs-toggle="tab" data-bs-target="#pickup" type="button" role="tab" aria-controls="job pickup" aria-selected="false">Pickup</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 3 %}active{% endif %}" id="job-delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="job delivery" aria-selected="false">Delivery</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link {% if current_step == 4 %}active{% endif %}" id="job-payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="job payment" aria-selected="false">Payment</button>
+                        </li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <div class="tab-content">
+                <div class="tab-pane {% if current_step == 1 %}active{% endif %}" id="job-info" role="tabpanel" aria-labelledby="job-info-tab">
+                  <p style="font-size: 18px">Enter the Job Information</p>
+                  <form method="POST" enctype='multipart/form-data'>
+                    <div class="card bg-white mt-2 mb-5">
+                      <div class="card-body">
+                        {% csrf_token %}
+                        {{ job_creation_form|crispy }}
+                      </div>
+                    </div>
+                    <input type="hidden" name="step" value="1">
+                    <button class="btn btn-warning" type="submit">Save & Continue</button>
+                  </form>
+                </div>
+                <div class="tab-pane {% if current_step == 2 %}active{% endif %}" id="pickup" role="tabpanel" aria-labelledby="job-pickup-tab">
+                  <p style="font-size: 18px">Enter the Pickup Information</p>
+                  <form method="POST">
+                    <div class="card bg-white mt-2 mb-5">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-lg-8">
+                            {% csrf_token %}
+                            {{ job_pickup_form|crispy }}
+                            <input type="hidden" id="pickup-latitude" name="pickup_latitude" value="{{ job.pickup_latitude }}">
+                            <input type="hidden" id="pickup-longtitude" name="pickup_longtitude" value="{{ job.pickup_longtitude }}">
+                          </div>
+                          <div class="col-lg-4">
+                            <div id="job_pickup_map"></div>
+                            <div id="pickup-infowindow-content">
+                              <span id="pickup-place-name" class="title"></span><br />
+                              <span id="pickup-place-address"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <input type="hidden" name="step" value="2">
+                    <button id="go_back_to_job_info" class="btn btn-outline-warning">Go Back</button>
+                    <button class="btn btn-warning" type="submit">Save & Continue</button>
+                  </form>
+                </div>
+                <div class="tab-pane {% if current_step == 3 %}active{% endif %}" id="delivery" role="tabpanel" aria-labelledby="job-delivery-tab">
+                  <p style="font-size: 18px">Enter the Delivery Information</p>
+                  <form method="POST">
+                    <div class="card bg-white mt-2 mb-5">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-lg-8">
+                            {% csrf_token %}
+                            {{ job_delivery_form|crispy }}
+                            <input type="hidden" id="delivery-latitude" name="delivery_latitude" value="{{ job.delivery_latitude }}">
+                            <input type="hidden" id="delivery-longtitude" name="delivery_longtitude" value="{{ job.delivery_longtitude }}">
+                          </div>
+                          <div class="col-lg-4">
+                            <div id="job_delivery_map"></div>
+                            <div id="delivery-infowindow-content">
+                              <span id="delivery-place-name" class="title"></span><br />
+                              <span id="delivery-place-address"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <input type="hidden" name="step" value="3">
+                    <button id="go_back_to_job_pickup" class="btn btn-outline-warning">Go Back</button>
+                    <button class="btn btn-warning" type="submit">Save & Continue</button>
+                  </form>
+                </div>
+                <div class="tab-pane {% if current_step == 4 %}active{% endif %}" id="payment" role="tabpanel" aria-labelledby="job-payment-tab">
+                  {% if messages %}
+                    {% for message in messages  %}
+                      <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-4" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>{{ messages }}</strong>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                  <p style="font-size: 18px">Your Payment Information</p>
+                  <form method="POST">
+                    <div class="card bg-white mt-2 mb-5">
+                      <div class="card-body">
+                      {% csrf_token %}
+                        <div class="form-group mt-2">
+                          <label>Your Debit/Credit Card</label>
+                          <input type="text" class="form-control" value="**** **** **** {{ request.user.customer.stripe_card_last_4_digits }}" disabled>
+                        </div>
+                        <div class="form-group mt-2">
+                          <label>Price</label>
+                          <input type="text" class="form-control" value="${{ created_jobs.price }}" disabled>
+                        </div>
+                      </div>
+                      <input type="hidden" name="step" value="4">
+                      <button id="go_back_to_job_delivery" class="btn btn-outline-warning mt-2 w-75 mx-auto">Go Back</button>
+                      <button class="btn btn-warning mt-2 mb-5 mx-auto w-75" type="submit">Create Job</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <script>
+    const go_back_to_job_info = document.querySelector('#go_back_to_job_info')
+    const go_back_to_job_pickup = document.querySelector('#go_back_to_job_pickup')
+    const go_back_to_job_delivery = document.querySelector('#go_back_to_job_delivery')
+    const job_info_tab_btn = document.querySelector('#job-info-tab')
+    const job_pickup_tab_btn = document.querySelector('#job-pickup-tab')
+    const job_delivery_tab_btn = document.querySelector('#job-delivery-tab')
+
+    go_back_to_job_info.addEventListener('click', () => {
+      job_info_tab_btn.click()
+    })
+    go_back_to_job_pickup.addEventListener('click', () => {
+      job_pickup_tab_btn.click()
+    })
+    go_back_to_job_delivery.addEventListener('click', () => {
+      job_delivery_tab_btn.click()
+    })
+    
+    let pickup_lat = parseFloat('{{ created_jobs.pickup_latitude }}')
+    let pickup_lng = parseFloat('{{ created_jobs.pickup_longtitude }}')
+    let delivery_lat = parseFloat('{{ created_jobs.delivery_latitude }}')
+    let delivery_lng = parseFloat('{{ created_jobs.delivery_longtitude }}')
+
+    function initMapByType(type, initLat, initLng) {
+      const map = new google.maps.Map(document.getElementById("job_" + type +"_map"), {
+        center: { lat: initLat || 6.465422, lng: initLng || 3.406448 },
+        zoom: 13,
+        mapTypeControl: false,
+      });
+      const input = document.getElementById("id_" + type + "_address");
+      const options = {
+        fields: ["formatted_address", "geometry", "name"],
+        strictBounds: false,
+        types: ["establishment"],
+      };
+
+      if (initLat && initLng) {
+        return new google.maps.Marker({
+          position: new google.maps.LatLng(initLat, initLng),
+          map: map,
+        })
+      }
+
+      const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+      autocomplete.bindTo("bounds", map);
+
+      const infowindow = new google.maps.InfoWindow();
+      const infowindowContent = document.getElementById(type + "-infowindow-content");
+
+      infowindow.setContent(infowindowContent);
+
+      const marker = new google.maps.Marker({
+        map,
+        anchorPoint: new google.maps.Point(0, -29),
+      });
+
+      autocomplete.addListener("place_changed", () => {
+        infowindow.close();
+        marker.setVisible(false);
+
+        const place = autocomplete.getPlace();
+        const lat = document.getElementById("id_" + type + "_latitude")
+        const long = document.getElementById("id_" + type + "_longtitude")
+        lat.value = place.geometry.location.lat()
+        long.value = place.geometry.location.lng()
+        if (!place.geometry || !place.geometry.location) {
+          // User entered the name of a Place that was not suggested and
+          // pressed the Enter key, or the Place Details request failed.
+          window.alert("No details available for input: '" + place.name + "'");
+          return;
+        }
+
+        // If the place has a geometry, then present it on a map.
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+        infowindowContent.children[type + "place-name"].textContent = place.name;
+        infowindowContent.children[type + "place-address"].textContent = place.formatted_address;
+        infowindow.open(map, marker);
+      });
+    }
+    function initMap() {
+      initMapByType("pickup", pickup_lat, pickup_lng)
+      initMapByType("delivery", delivery_lat, delivery_lng)
+    }
+
+    window.initMap = initMap;
+  </script>
+  <script
+      src="https://maps.googleapis.com/maps/api/js?key={% get_env_var 'MAPS_API_KEY' %}&callback=initMap&libraries=places&v=weekly"
+      async defer
+    ></script>
+  <script>
+      let alertListBtn = document.querySelectorAll('.alert > button');
+      alertListBtn.forEach((btn) => {
+        if (btn !== null) {
+          setTimeout(() => {
+              btn.click() 
+          }, 6000)
+        }
+      })
+  </script>
+  
+{% endblock main %}
+

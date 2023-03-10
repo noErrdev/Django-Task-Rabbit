@@ -1,0 +1,127 @@
+{% extends 'courier/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>
+        {% if job.get_status_display == 'picking' %}
+            Pickup
+        {% else %}
+            Drop-off
+        {% endif %}
+         Camera | Task Rabbit
+    </title>
+{% endblock title %}
+
+{% block head %}
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+        }
+        .btn-back {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+
+        }
+        .buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+        #take-photo {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        #upload {
+            height: 100%;
+            display: none;
+            align-items: center;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+
+    <div id="upload">
+        <img src="" alt="Pickup Photo" id="photo">
+        <div class="buttons">
+            <a id="retake-button" style="padding: 8px 8px; background: white; text-decoration: none; color: black" href="javascript:void(retake_photo())">Retake Photo</a>
+            <a id="upload-button" style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(upload_photo())">
+                Upload 
+                {% if job.get_status_display == 'picking' %}
+                    Pickup
+                {% else %}
+                    Drop-off
+                {% endif %}
+                Photo
+            </a>
+        </div>
+    </div>
+    <div id="take-photo">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="canvas" class="d-none"></canvas>
+        <audio id="snapSound" src="{% static 'audio/snap.wav' %}" preload = "auto"></audio>
+
+        <a href="{% url 'courier:current_job' %}" class="btn-back">
+            <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"/></svg>
+        </a>
+
+        <div class="buttons">
+            <a style="padding: 8px 8px; background: orange; text-decoration: none; color: black" href="javascript:void(take_photo())" >
+                Take 
+                {% if job.get_status_display == 'picking' %}
+                    Pickup
+                {% else %}
+                    Drop-off
+                {% endif %}
+                Photo
+            </a>
+        </div>
+    </div>
+    <script>
+        const webcamElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('canvas');
+        const snapSoundElement = document.getElementById('snapSound');
+        const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+        webcam.start()
+        function take_photo() {
+            var picture = webcam.snap();
+            document.getElementById('photo').setAttribute('src', picture)
+            document.getElementById('take-photo').style.display = "none"
+            document.getElementById('upload').style.display = "flex"
+        }
+        function retake_photo() {
+            document.getElementById('take-photo').style.display = "flex"
+            document.getElementById('upload').style.display = "none"
+        }
+        function upload_photo() {
+            canvasElement.toBlob((blob) => {
+                let formData = new FormData()
+                let upload_name = "{% if job.get_status_display == 'picking' %}pickup{% else %}delivery{% endif %}"
+                let photo_ending = "{{ job.id }}"
+                formData.append(`${upload_name}_photo`, blob, `${upload_name}_photo_${photo_ending}.png`)
+
+                fetch("{% url 'courier:current_job_update_api' job.id %}", {
+                    method: "POST",
+                    body: formData,
+                }).then((res) => {
+                    return res.json()
+                }).then((data) => {
+                    if (data.success) {
+                        window.location.href = "{% if job.get_status_display == 'picking' %}{% url 'courier:current_job' %}{% else %}{% url 'courier:completed_job' %}{% endif %}"
+                    } else {
+                        window.reload()
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock content %}

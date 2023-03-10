@@ -1,0 +1,57 @@
+{% extends 'customer/base.html' %}
+
+{% block title %}
+    <title>Your Archived Jobs | Task Rabbit</title>
+{% endblock title %}
+
+{% block main %}
+    <h4>My Archived Jobs</h4>
+    {% include 'customer/partials/jobs-navbar.html' %}
+    <div class="list-group mt-3">
+        {% if jobs %}
+            {% for job in jobs  %}
+                <a href="{{ job.get_absolute_url }}" class="list-group-item list-group-item-action">
+                    <div class="media d-flex justify-content-between mt-4 mb-4">
+                        <img style="border-radius: 12px;" class="mr-3" width="100" height="100" src="{{ job.photo.url }}" alt="Image for the job: {{ job.dscription }}">
+                        <div style="margin-left: 12px;" class="media-body">
+                            <div class="row">
+                                <div class="col-lg-9">
+                                    <h3 class="mb-1 mt-1">{{ job.name }}</h3>
+                                    <p style="font-size: 18px">{{ job.description }}</p>
+                                    <div class="d-flex mb-4" title="Pickup Location">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M12 14c2.206 0 4-1.794 4-4s-1.794-4-4-4-4 1.794-4 4 1.794 4 4 4zm0-6c1.103 0 2 .897 2 2s-.897 2-2 2-2-.897-2-2 .897-2 2-2z"/><path d="M11.42 21.814a.998.998 0 0 0 1.16 0C12.884 21.599 20.029 16.44 20 10c0-4.411-3.589-8-8-8S4 5.589 4 9.995c-.029 6.445 7.116 11.604 7.42 11.819zM12 4c3.309 0 6 2.691 6 6.005.021 4.438-4.388 8.423-6 9.73-1.611-1.308-6.021-5.294-6-9.735 0-3.309 2.691-6 6-6z"/></svg>
+                                        </div>
+                                        <div style="margin-left: 12px;" class="d-flex flex-column">
+                                            <b style="font-size: 18px">{{ job.pickup_name }}</b>
+                                            <small>{{ job.pickup_address }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex" title="Delivery Location">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="m21.447 6.105-6-3a1 1 0 0 0-.895 0L9 5.882 3.447 3.105A1 1 0 0 0 2 4v13c0 .379.214.725.553.895l6 3a1 1 0 0 0 .895 0L15 18.118l5.553 2.776a.992.992 0 0 0 .972-.043c.295-.183.475-.504.475-.851V7c0-.379-.214-.725-.553-.895zM10 7.618l4-2v10.764l-4 2V7.618zm-6-2 4 2v10.764l-4-2V5.618zm16 12.764-4-2V5.618l4 2v10.764z"/></svg>
+                                        </div>
+                                        <div style="margin-left: 12px;" class="d-flex flex-column">
+                                            <b style="font-size: 18px;">{{ job.delivery_name }}</b>
+                                            <small>{{ job.delivery_address }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 text-right d-flex flex-column justify-content-between mt-2">
+                                    <div class="mb-2">
+                                        <span style="width: fit-content;" class="badge rounded-pill bg-warning text-black">{{ job.get_status_display }}</span>
+                                    </div>
+                                    <h2 class="mb-1">${{ job.price }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                <div class="card-body text-center">You have no archived jobs yet!</div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock main %}

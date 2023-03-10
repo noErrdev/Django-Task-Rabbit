@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    <title> 
+        {% if request.GET.next != '/courier/' %}
+            Customer Sign In
+        {% else %}
+            Courier Sign In
+        {% endif %}
+        | 
+        Task Rabbit
+    </title>
+{% endblock title %}
+
+{% block content %}
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-center text-upeercase mb-3">
+                            {% if request.GET.next != '/courier/' %}
+                                Customer Sign In
+                            {% else %}
+                                Courier Sign In
+                            {% endif %}
+                        </h4>
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button class="btn btn-warning btn-block">Sign In</button>
+                            <p class="text-center mt-3">
+                                New to Task Rabbit?
+                                <a href="{% url 'sign_up' %}?next={{ request.GET.next }}">Sign Up</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
