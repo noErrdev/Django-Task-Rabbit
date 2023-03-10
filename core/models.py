@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to="customer/avatars/", blank=True, null=True)
@@ -34,6 +35,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
 
 
 class Job(models.Model):
