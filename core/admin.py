@@ -1,5 +1,13 @@
 from django.contrib import admin
+from django.conf import settings
+from paypalrestsdk import configure
 from . import models
+
+configure({
+    "mode": settings.PAYPAL_MODE,
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_APP_SECRET_KEY
+})
 
 # Register your models here.
 admin.site.register(models.Customer)

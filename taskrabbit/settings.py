@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -59,9 +59,9 @@ LOGOUT_URL = "/logout/"
 
 LOGOUT_REDIRECT_URL = "/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-MEDIA_URL  = "/media/"
+MEDIA_URL = "/media/"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -79,7 +79,7 @@ ROOT_URLCONF = "taskrabbit.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -158,19 +158,22 @@ EMAIL_HOST_PASSWORD = ""
 DEFAULT_FROM_EMAIL = "Task Rabbit <noreply@taskrabbit.com>"
 
 FIREBASE_ADMIN_CREDENTIALS_DICT = {
-  "type": os.getenv("FIREBASE_ACCOUNT_TYPE"), 
-  "project_id": os.getenv("FIREBASE_PROJECT_ID"),
-  "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
-  "private_key": os.getenv("FIREBASE_PRIVATE_KEY"),
-  "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
-  "client_id": os.getenv("FIREBASE_CLIENT_ID"),
-  "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
-  "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
-  "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_CERT_URL"),
-  "client_x509_cert_url": os.getenv("FIREBAE_CLIENT_CERT_URL") 
+    "type": os.getenv("FIREBASE_ACCOUNT_TYPE"),
+    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("FIREBASE_PRIVATE_KEY"),
+    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+    "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+    "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": os.getenv("FIREBAE_CLIENT_CERT_URL"),
 }
 
-FIREBASE_ADMIN_CREDENTIALS_PATH = os.path.join(BASE_DIR, "config/firebase/task-rabbit-7d031-firebase-adminsdk-37zrj-63268dcbe9.json")
+FIREBASE_ADMIN_CREDENTIALS_PATH = os.path.join(
+    BASE_DIR,
+    "config/firebase/task-rabbit-7d031-firebase-adminsdk-37zrj-63268dcbe9.json",
+)
 
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 
@@ -179,3 +182,11 @@ STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 MAPS_API_KEY = os.getenv("MAPS_API_KEY")
 
 DISTANCE_MATRIX_API_KEY = os.getenv("DISTANCE_MATRIX_API_KEY")
+
+PAYPAL_MODE = os.getenv("PAYPAL_MODE")
+
+PAYPAL_SANDBOX_ACCOUNT = os.getenv("PAYPAL_SANDBOX_ACCOUNT")
+
+PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
+
+PAYPAL_APP_SECRET_KEY = os.getenv("PAYPAL_APP_SECRET_KEY")
