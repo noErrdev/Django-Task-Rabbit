@@ -30,8 +30,7 @@
                     </ul>
                 </div>
             {% else %}
-                <form action="" class="form-inline">
-                    <span style="margin-right: 10px;">{{ request.user.get_full_name|default_if_none:request.user.username }}</span>
+                <form class="form-inline">
                     <a href="{% url 'logout' %}" class="btn btn-outline-dark">Sign Out</a>
                 </form>
             {% endif %}
