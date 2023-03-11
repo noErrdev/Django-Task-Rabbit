@@ -90,15 +90,16 @@
         {% endif %}
     </div>
     <script>
+        const job_id = "{{ job.id }}"
+        const jobSocket = new WebSocket(
+            'ws://'
+            + '127.0.0.1:8000'
+            + '/ws/jobs/'
+            + job_id
+            + '/'
+        );
+
         function updateCourierPosition(map) {
-            const job_id = "{{ job.id }}"
-            const jobSocket = new WebSocket(
-                'ws://'
-                + window.location.host
-                + '/ws/jobs/'
-                + job_id
-                + '/'
-            );
             navigator.geolocation.watchPosition(pos => {
                 let courierPosition = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
                 if (!window.courierMarker) {
@@ -110,22 +111,19 @@
                     window.courierMarker.setPosition(courierPosition)
                 }
                 map.panTo(courierPosition)
-                jobSocket.onopen = (e) => {
-                    console.log("connect");
-                    try {
-                        jobSocket.send(
-                            JSON.stringify({
-                                job: {
-                                    courier_lat: pos.coords.latitude,
-                                    courier_lng: pos.coords.longitude
-                                }
-                            })
-                        )
-                    }
-                    catch(err) {
-                        console.log(err)
-                    }
-                };
+                try {
+                    jobSocket.send(
+                        JSON.stringify({
+                            job: {
+                                courier_lat: pos.coords.latitude,
+                                courier_lng: pos.coords.longitude
+                            }
+                        })
+                    )
+                }
+                catch(err) {
+                    console.log(err)
+                }
             }, pos => console.log(pos))
 
         }

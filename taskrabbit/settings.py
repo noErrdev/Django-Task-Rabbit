@@ -31,11 +31,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# CSRF_TRUSTED_ORIGINS = ['https://fb65-197-210-29-255.eu.ngrok.io/*', "ws://localhost:8000/*"]
+CSRF_TRUSTED_ORIGINS = ['https://fb65-197-210-29-255.eu.ngrok.io/*', "ws://localhost:8000/*"]
 
 # Application definition
 
+ASGI_APPLICATION = "taskrabbit.asgi.application"
+
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -45,7 +48,6 @@ INSTALLED_APPS = [
     # 3rd Party
     "crispy_forms",
     "crispy_bootstrap5",
-    "channels",
     # Local apps
     "core.apps.CoreConfig",
 ]
@@ -194,5 +196,3 @@ PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 PAYPAL_APP_SECRET_KEY = os.getenv("PAYPAL_APP_SECRET_KEY")
 
 NOTIFICATIONS_URL = 'https://fb65-197-210-29-255.eu.ngrok.io'
-
-ASGI_APPLICATION = "taskrabbit.asgi.application"
