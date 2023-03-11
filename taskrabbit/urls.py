@@ -2,7 +2,7 @@
 taskrabbit URL Configuration
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
@@ -10,6 +10,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from core.views import index, sign_up
 import core.customer.urls
 import core.courier.urls
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),

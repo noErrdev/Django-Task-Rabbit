@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://e71a-197-210-29-255.eu.ngrok.io/*']
+# CSRF_TRUSTED_ORIGINS = ['https://fb65-197-210-29-255.eu.ngrok.io/*', "ws://localhost:8000/*"]
 
 # Application definition
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # 3rd Party
     "crispy_forms",
     "crispy_bootstrap5",
+    "channels",
     # Local apps
     "core.apps.CoreConfig",
 ]
@@ -192,4 +193,6 @@ PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 
 PAYPAL_APP_SECRET_KEY = os.getenv("PAYPAL_APP_SECRET_KEY")
 
-NOTIFICATIONS_URL = 'https://e71a-197-210-29-255.eu.ngrok.io'
+NOTIFICATIONS_URL = 'https://fb65-197-210-29-255.eu.ngrok.io'
+
+ASGI_APPLICATION = "taskrabbit.asgi.application"
