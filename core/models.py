@@ -24,6 +24,7 @@ class Courier(models.Model):
     address = models.CharField(max_length=300, blank=True)
     latitude = models.FloatField(blank=True, default=0)
     longtitude = models.FloatField(blank=True, default=0)
+    fcm_token = models.TextField(blank=True)
 
     def __str__(self):
         return self.user.get_full_name()

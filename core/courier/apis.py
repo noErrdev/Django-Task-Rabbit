@@ -7,7 +7,7 @@ from core.models import *
 
 
 @csrf_exempt
-@login_required(login_url="/sign-in/courier/")
+@login_required(login_url="/courier/sign-in/")
 def courier_available_jobs_api(request):
     jobs = Job.objects.filter(status=Job.PROCESSING)
     jobs = list(jobs.values())
@@ -16,7 +16,7 @@ def courier_available_jobs_api(request):
 
 
 @csrf_exempt
-@login_required(login_url="/sign-in/courier/")
+@login_required(login_url="/courier/sign-in/")
 def courier_current_job_update_api(request, pk):
     job = Job.objects.filter(
         id=pk, courier=request.user.courier, status__in=[Job.PICKING, Job.DELIVERING]
@@ -33,6 +33,18 @@ def courier_current_job_update_api(request, pk):
         job.status = Job.COMPLETED
         job.save()
 
+    return JsonResponse(
+        {
+            "success": True,
+        }
+    )
+
+@csrf_exempt
+@login_required(login_url="/courier/sign-in/")
+def courier_fcm_token_update_api(request):
+    request.user.courier.fcm_token = request.GET.get('fcm_token')
+    request.user.courier.save()
+    
     return JsonResponse(
         {
             "success": True,
