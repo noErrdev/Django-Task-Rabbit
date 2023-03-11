@@ -1,7 +1,7 @@
 {% load get_env %}
 
 <script type="module">
-    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-messaging.js"
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-messaging.js"
     const messaging = getMessaging()
 
     requestPermission();
@@ -85,7 +85,7 @@
         });
     }); {% endcomment %}
 
-    {% comment %} messaging.onMessage(function (payload) {
+    onMessage((payload) => {
         payload = payload.data;
         // Create notification manually when user is focused on the tab
         const notificationTitle = payload.title;
@@ -107,7 +107,10 @@
                 notification.close();
             }
         }
-    }); {% endcomment %}
+        setTimeout(() => {
+            window.location.reload()
+        }, 10000)
+    });
 
 
 </script>

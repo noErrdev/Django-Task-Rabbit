@@ -29,8 +29,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['https://e71a-197-210-29-255.eu.ngrok.io/*']
 
 # Application definition
 
@@ -190,3 +191,5 @@ PAYPAL_SANDBOX_ACCOUNT = os.getenv("PAYPAL_SANDBOX_ACCOUNT")
 PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 
 PAYPAL_APP_SECRET_KEY = os.getenv("PAYPAL_APP_SECRET_KEY")
+
+NOTIFICATIONS_URL = 'https://e71a-197-210-29-255.eu.ngrok.io'
