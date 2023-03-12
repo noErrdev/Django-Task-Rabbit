@@ -1,16 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     <title>Task Rabbit</title>
 {% endblock title %}
 
+{% block head %}
+    <style>
+        section {
+           overflow : hidden;
+        }
+    </style>
+{% endblock head %}
 {% block content %}
     <section class="d-flex align-tems-center mt-8">
         <div class="container position-relative">
             <div class="row">
-                <div style="margin-top: 80px; margin-bottom: 20px;" class="col-lg-12">
+                <div style="margin-top: 80px; margin-bottom: 20px; z-index: 20" class="col-lg-12">
                     <h1 class="text-center">Welcome to Task Rabbit</h1>
                     <p style="font-size: 17px;" class="text-center">A simple, fast and unobstrusive courier client for your deliveries and jobs</p>
+                </div>
+                <div class="text-center">
+                    <img style="margin-top: -120px; background: transparent;" src="{% static 'images/delivery.gif' %}" alt="Taskrabbit delivery">
                 </div>
                 <div class="col-lg-6 mb-4">
                     <div class="card">
@@ -18,7 +29,7 @@
                             <h4 class="card-title">CUSTOMER</h4>
                             <p class="card-text">
                                 Register with us to create a task or service you need done by a courier. 
-                                WHen you register with us, we automatically create a profile that can be used for customer and courier Sign In
+                                When you register with us, we automatically create a profile that can be used for customer and courier Sign In
                             </p>
                             <a href="{% url 'customer:profile' %}" class="btn btn-warning">Create your profile</a>
                         </div>
