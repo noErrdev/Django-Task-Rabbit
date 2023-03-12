@@ -1,25 +1,27 @@
 import json
 
-from channels.generic.websocket import AsyncWebsocketConsumer
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import WebsocketConsumer
 
 
-class JobConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
+class JobConsumer(WebsocketConsumer):
+    def connect(self):
         self.job_id = self.scope["url_route"]["kwargs"]["job_id"]
         self.job_group_name = "job_%s" % self.job_id
 
-        await self.channel_layer.group_add(
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
             self.job_group_name, self.channel_name
         )
 
-        await self.accept()
+        self.accept()
 
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
+    def disconnect(self, close_code):
+        async_to_sync(self.channel_layer.group_discard)(
             self.job_group_name, self.channel_name
         )
 
-    async def receive(self, text_data):
+    def receive(self, text_data):
         text_data_json = json.loads(text_data)
         job = text_data_json["job"]
 
@@ -29,12 +31,12 @@ class JobConsumer(AsyncWebsocketConsumer):
             self.scope["user"].courier.longtitude = job["courier_lng"]
             self.scope["user"].courier.save()
 
-        await self.channel_layer.group_send(
+        async_to_sync(self.channel_layer.group_send)(
             self.job_group_name, {"type": "job_update", "job": job}
         )
 
-    async def job_update(self, event):
+    def job_update(self, event):
         job = event["job"]
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({"job": job}))
+        self.send(text_data=json.dumps({"job": job}))

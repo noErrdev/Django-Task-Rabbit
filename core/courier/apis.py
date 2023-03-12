@@ -1,3 +1,5 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -27,11 +29,36 @@ def courier_current_job_update_api(request, pk):
         job.pickedup_at = timezone.now()
         job.status = Job.DELIVERING
         job.save()
+        
+        try:
+            layer = get_channel_layer()
+            async_to_sync(layer.group_send)("job_" + str(job.id), {
+                "type": "job_update",
+                "job": {
+                    "status": job.get_status_display(),
+                    "pickup_photo": job.pickup_photo.url,
+                }
+            })
+        except Exception as e:
+            print(e)
+
     elif job.status == Job.DELIVERING:
         job.delivery_photo = request.FILES["delivery_photo"]
         job.delivered_at = timezone.now()
         job.status = Job.COMPLETED
         job.save()
+
+        try:
+            layer = get_channel_layer()
+            async_to_sync(layer.group_send)("job_" + str(job.id), {
+                "type": "job_update",
+                "job": {
+                    "status": job.get_status_display(),
+                    "delivery_photo": job.delivery_photo.url,
+                }
+            })
+        except Exception as e:
+            print(e)
 
     return JsonResponse(
         {

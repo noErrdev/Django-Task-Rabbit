@@ -127,9 +127,9 @@
                     <b>{{ object.pickup_name }}</b><br>
                     <span>{{ object.pickup_phone_number }}</span>
                 </div>
-                <div id="pickup_photo" class="col-lg-4">
+                <div class="col-lg-4">
                     {% if object.pickup_photo %}
-                        <img style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.pickup_photo.url }}" alt="Image for the pickup">
+                        <img id="pickup_photo" style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.pickup_photo.url }}" alt="Image for the pickup">
                     {% else %}
                         <div class="photo-blank">
                             Pickup photo will appear here
@@ -151,9 +151,9 @@
                     <b>{{ object.delivery_name }}</b><br>
                     <span>{{ object.delivery_phone_number }}</span>
                 </div>
-                <div id="delivery_photo" class="col-lg-4">
+                <div class="col-lg-4">
                     {% if object.delivery_photo %}
-                        <img style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.delivery_photo.url }}" alt="Image for the pickup">
+                        <img id="delivery_photo" style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.delivery_photo.url }}" alt="Image for the pickup">
                     {% else %}
                         <div class="photo-blank">
                             Delivery photo will appear here
@@ -168,7 +168,7 @@
         <b class="text-secondary" style="font-size: 18px">TRACK DELIVERY</b>
         
         <div class="mb-2">
-            <span style="width: fit-content;" class="badge rounded-pill bg-warning text-black">{{ object.get_status_display }}</span>
+            <span id="job_status" style="width: fit-content;" class="badge rounded-pill bg-warning text-black">{{ object.get_status_display }}</span>
         </div>
     </div>
     <div class="card bg-white mt-2">
@@ -230,6 +230,20 @@
             if (job.courier_lat && job.courier_lng) {
                 var courierPos = new google.maps.LatLng(job.courier_lat, job.courier_lng)
                 window.courierMarker.setPosition(courierPosition)
+            }
+            if (job.status) {
+                let job_status = document.getElementById('job_status')
+                job_status.innerHTML = job.status
+            }
+            if (job.pickup_photo) {
+                let job_pickup_photo = document.getElementById('pickup_photo')
+                job_pickup_photo.style.borderRadius = "9999px";
+                job_pickup_photo.setAttribute("src", job.pickup_photo)
+            }
+            if (job.delivery_photo) {
+                let job_delivery_photo = document.getElementById('delivery_photo')
+                job_delivery_photo.style.borderRadius = "9999px";
+                job_delivery_photo.setAttribute("src", job.delivery_photo)
             }
         }
     </script>

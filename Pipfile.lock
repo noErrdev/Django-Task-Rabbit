@@ -159,14 +159,6 @@
             "index": "pypi",
             "version": "==4.0.0"
         },
-        "channels-redis": {
-            "hashes": [
-                "sha256:122414f29f525f7b9e0c9d59cdcfc4dc1b0eecba16fbb6a1c23f1d9b58f49dcb",
-                "sha256:81b59d68f53313e1aa891f23591841b684abb936b42e4d1a966d9e4dc63a95ec"
-            ],
-            "index": "pypi",
-            "version": "==4.0.0"
-        },
         "charset-normalizer": {
             "hashes": [
                 "sha256:04afa6387e2b282cf78ff3dbce20f0cc071c12dc8f685bd40960cc68644cfea6",
