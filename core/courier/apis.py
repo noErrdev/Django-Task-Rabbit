@@ -39,8 +39,8 @@ def courier_current_job_update_api(request, pk):
                     "pickup_photo": job.pickup_photo.url,
                 }
             })
-        except Exception as e:
-            print(e)
+        except Exception:
+            pass
 
     elif job.status == Job.DELIVERING:
         job.delivery_photo = request.FILES["delivery_photo"]
@@ -57,8 +57,8 @@ def courier_current_job_update_api(request, pk):
                     "delivery_photo": job.delivery_photo.url,
                 }
             })
-        except Exception as e:
-            print(e)
+        except Exception:
+            pass
 
     return JsonResponse(
         {

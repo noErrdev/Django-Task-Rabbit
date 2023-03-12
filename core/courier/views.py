@@ -1,3 +1,5 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -63,6 +65,17 @@ def courier_available_job(request, pk):
         job.courier = request.user.courier
         job.status = Job.PICKING
         job.save()
+        
+        try:
+            layer = get_channel_layer()
+            async_to_sync(layer.group_send)("job_" + str(job.id), {
+                "type": "job_update",
+                "job": {
+                    "status": job.get_status_display(),
+                }
+            })
+        except Exception:
+            pass
         return redirect(reverse(available_jobs_namespace))
     return render(request, "courier/available-job-details.html", {"job": job})
 

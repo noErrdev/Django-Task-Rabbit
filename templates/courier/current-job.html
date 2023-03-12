@@ -92,9 +92,10 @@
     <script>
         const job_id = "{{ job.id }}"
         const user_id = "{{ request.user.id }}"
+        const ws_standard = "{% if request.get_host == 'localhost:8000' or request.get_host == '127.0.0.1:8000' %}ws://{% else %}wss://{% endif %}"
         const jobSocket = new WebSocket(
-            'ws://'
-            + '127.0.0.1:8000'
+            ws_standard
+            + window.location.host
             + '/ws/jobs/'
             + job_id
             + '/'

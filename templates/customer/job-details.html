@@ -57,7 +57,7 @@
         }
 
         #mode-selector label {
-        font-family: Roboto;
+        font-family: Roboto, sans-serif;
         font-size: 13px;
         font-weight: 300;
         }
@@ -74,10 +74,10 @@
             </span> 
         </button>
         {% if object.get_status_display == "processing" %}
-            <form method="POST">
+            <form id="cancel_job_form" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="job_id" value="{{ object.id }}">
-                <button style="margin-left: 12px;" class="btn btn-warning" type="submit">Cancel Job</button>
+                <button style="margin-left: 12px;" class="btn btn-warning mt-4 mb-4" type="submit">Cancel Job</button>
             </form>
         {% endif %}
     </div>
@@ -119,17 +119,17 @@
                 Pickup
             </h4>
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-4 mb-2">
                     <b>Address</b><br>
                     <span>{{ object.pickup_address }}</span>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 mb-2">
                     <b>{{ object.pickup_name }}</b><br>
                     <span>{{ object.pickup_phone_number }}</span>
                 </div>
-                <div class="col-lg-4">
+                <div id="pickup_photo" class="col-lg-4">
                     {% if object.pickup_photo %}
-                        <img id="pickup_photo" style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.pickup_photo.url }}" alt="Image for the pickup">
+                        <img style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.pickup_photo.url }}" alt="Image for the pickup">
                     {% else %}
                         <div class="photo-blank">
                             Pickup photo will appear here
@@ -143,17 +143,17 @@
                 Delivery
             </h4>
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-4 mb-2">
                     <b>Address</b><br>
                     <span>{{ object.delivery_address }}</span>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 mb-2">
                     <b>{{ object.delivery_name }}</b><br>
                     <span>{{ object.delivery_phone_number }}</span>
                 </div>
-                <div class="col-lg-4">
+                <div id="delivery_photo" class="col-lg-4 mb-2">
                     {% if object.delivery_photo %}
-                        <img id="delivery_photo" style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.delivery_photo.url }}" alt="Image for the pickup">
+                        <img style="border-radius: 12px;" class="photo" width="130" height="130" src="{{ object.delivery_photo.url }}" alt="Image for the pickup">
                     {% else %}
                         <div class="photo-blank">
                             Delivery photo will appear here
@@ -185,9 +185,10 @@
         let courier_lng = parseFloat("{{ object.courier.longtitude }}")
 
         const job_id = "{{ object.id }}"
+        const ws_standard = "{% if request.get_host == 'localhost:8000' or request.get_host == '127.0.0.1:8000' %}ws://{% else %}wss://{% endif %}"
         const jobSocket = new WebSocket(
-            'ws://'
-            + '127.0.0.1:8000'
+            ws_standard
+            + window.location.host
             + '/ws/jobs/'
             + job_id
             + '/'
@@ -223,27 +224,30 @@
        
         window.initMap = initMap;
         
-        jobSocket.onMessage = function(e) {
+        jobSocket.onmessage = function(e) {
             let data = JSON.parse(e.data)
             let job = data.job
 
             if (job.courier_lat && job.courier_lng) {
                 var courierPos = new google.maps.LatLng(job.courier_lat, job.courier_lng)
-                window.courierMarker.setPosition(courierPosition)
+                window.courierMarker.setPosition(courierPos)
             }
             if (job.status) {
                 let job_status = document.getElementById('job_status')
+                let cjf = document.getElementById('cancel_job_form')
                 job_status.innerHTML = job.status
+                cjf.style.display = "none"
             }
             if (job.pickup_photo) {
-                let job_pickup_photo = document.getElementById('pickup_photo')
-                job_pickup_photo.style.borderRadius = "9999px";
-                job_pickup_photo.setAttribute("src", job.pickup_photo)
+                let pp_url = job.pickup_photo
+                console.log(pp_url)
+                let job_pickup_photo = document.querySelector('#pickup_photo')
+                job_pickup_photo.innerHTML = `<img style="border-radius: 12px; margin-top: 8px;" width="130" height="130" class='photo' src=${pp_url}/>`
             }
             if (job.delivery_photo) {
-                let job_delivery_photo = document.getElementById('delivery_photo')
-                job_delivery_photo.style.borderRadius = "9999px";
-                job_delivery_photo.setAttribute("src", job.delivery_photo)
+                let dp_url = job.delivery_photo
+                let job_delivery_photo = document.querySelector('#delivery_photo')
+                job_delivery_photo.innerHTML = `<img style="border-radius: 12px; margin-top: 8px;" width="130" height="130" class='photo' src=${dp_url}/>`
             }
         }
     </script>
