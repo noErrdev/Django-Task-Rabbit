@@ -91,6 +91,7 @@
     </div>
     <script>
         const job_id = "{{ job.id }}"
+        const user_id = "{{ request.user.id }}"
         const jobSocket = new WebSocket(
             'ws://'
             + '127.0.0.1:8000'
@@ -98,6 +99,7 @@
             + job_id
             + '/'
         );
+        
 
         function updateCourierPosition(map) {
             navigator.geolocation.watchPosition(pos => {
@@ -115,6 +117,7 @@
                     jobSocket.send(
                         JSON.stringify({
                             job: {
+                                user_id: user_id,
                                 courier_lat: pos.coords.latitude,
                                 courier_lng: pos.coords.longitude
                             }

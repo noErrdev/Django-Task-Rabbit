@@ -37,6 +37,15 @@ CSRF_TRUSTED_ORIGINS = ['https://fb65-197-210-29-255.eu.ngrok.io/*', "ws://local
 
 ASGI_APPLICATION = "taskrabbit.asgi.application"
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}
+
 INSTALLED_APPS = [
     "daphne",
     "django.contrib.admin",
