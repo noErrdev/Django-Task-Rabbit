@@ -8,10 +8,8 @@
 
     function sendTokenToServer(currentToken) {
         if (!isTokenSentToServer()) {
-            // The API Endpoint will be explained at step 8
             fetch("{% url 'courier:fcm_token_update_api' %}" + `?fcm_token=${currentToken}`)
                 .then((data) => {
-                    console.log(data);
                     setTokenSentToServer(true);
                 }).catch((err) => {
                     console.log(err);
@@ -54,7 +52,6 @@
                 vapidKey: "{% get_env_var 'FIREBASE_MESSAGING_KEY' %}"
             }
         ).then(function (currentToken) {
-            console.log(currentToken);
             if (currentToken) {
                 sendTokenToServer(currentToken);
             } else {
