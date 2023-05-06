@@ -25,7 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "758nvl90ldh08&@k1sk3(&cxim^dfcwb&1tfb2v1mxe)-vyh4=")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -47,24 +46,33 @@ CHANNEL_LAYERS = {
 }
 
 INSTALLED_APPS = [
-    "daphne",
+    # Django apps
+    "daphne", # ASGI Server
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    # Local apps
+    "core.apps.CoreConfig",
     # 3rd Party
     "cloudinary_storage",
     "cloudinary",
     "crispy_forms",
     "crispy_bootstrap5",
-    # Local apps
-    "core.apps.CoreConfig",
+    'allauth',
+    'allauth.account', 
+    'allauth.socialaccount', 
+    'allauth.socialaccount.providers.google',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+SITE_ID = 1
 
 LOGIN_URL = "/login/"
 
@@ -111,6 +119,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "taskrabbit.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'offline',
+        }
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

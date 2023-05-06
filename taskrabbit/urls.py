@@ -11,6 +11,9 @@ from core.views import index, sign_up
 import core.customer.urls
 import core.courier.urls
 
+from django.contrib import admin
+from django.urls import path, include
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -18,6 +21,7 @@ urlpatterns = [
     path("sign-in/", LoginView.as_view(template_name="login.html"), name="login"),
     path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
     path("sign-up", sign_up, name="sign_up"),
+    path('accounts/', include('allauth.urls')),
     path("customer/", include(core.customer.urls, namespace="customer")),
     path("courier/", include(core.courier.urls, namespace="courier")),
     path(

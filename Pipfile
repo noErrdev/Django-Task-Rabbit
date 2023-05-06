@@ -17,6 +17,7 @@ channels = {extras = ["daphne"], version = "*"}
 channels-redis = "~=3.4.1"
 django-cloudinary-storage = "~=0.3.0"
 cloudinary = "~=1.32.0"
+django-allauth = "~=0.53.1"
 
 [dev-packages]
 
