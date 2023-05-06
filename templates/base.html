@@ -22,12 +22,12 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse " id="collapsibleNavId">
+                <div class="collapse navbar-collapse" id="collapsibleNavId">
                     <ul class="navbar-nav mt-2 mt-2">
                         <li class="nav-item {% if request.GET.next != '/courier/' %} active {% endif %}">
                             <a style="background: #FFF; opacity: 0.5" class="btn mb-2" href="{% url 'login' %}?next=/customer/" aria-current="page">Sign In Customer<span class="visually-hidden">(current)</span></a>
                         </li>
-                        <li style="margin-left: 16px;" class="nav-item {% if request.GET.next == '/courier/' %} active {% endif %}">
+                        <li class="nav-item ml-md-4{% if request.GET.next == '/courier/' %} active {% endif %}">
                             <a style="background: #FFF; opacity: 0.7;" class="btn" href="{% url 'login' %}?next=/courier/">Sign In Courier</a>
                         </li>
                     </ul>
