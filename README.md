@@ -1,5 +1,5 @@
 # Task-Rabbit
-A online courier service where a customer can request from a service from a rabbit (courier) with authentication and payment processing for the services offered by the rabbit. By the way, this is not a clone of taskrabbit the US company, I recently just discovered there is actually a company called taskrabbit. My bad 😅 Please don't sue me. It is purely a thought up name. There is no way I could have known there is a company named so. Anyway, Enjoy!
+A online courier service where a customer can request from a service from a rabbit (courier) with authentication and payment processing for the services offered by the rabbit. 
 
 ![image](https://user-images.githubusercontent.com/88239970/227616780-f2cf2179-477f-4d34-9623-2333a9d1acf9.png)
 
