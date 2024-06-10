@@ -24,32 +24,55 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4cy61gs64k_andasopxodlyjswa$k51^vv-3&rfyih1+=c_o0-"
-
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "758nvl90ldh08&@k1sk3(&cxim^dfcwb&1tfb2v1mxe)-vyh4=")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['https://fb65-197-210-29-255.eu.ngrok.io/*', "ws://localhost:8000/*"]
 
 # Application definition
 
+ASGI_APPLICATION = "taskrabbit.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 INSTALLED_APPS = [
+    # Django apps
+    "daphne", # ASGI Server
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # 3rd Party
-    "crispy_forms",
-    "crispy_bootstrap5",
+    "django.contrib.sites",
     # Local apps
     "core.apps.CoreConfig",
+    # 3rd Party
+    "cloudinary_storage",
+    "cloudinary",
+    "crispy_forms",
+    "crispy_bootstrap5",
+    'allauth',
+    'allauth.account', 
+    'allauth.socialaccount', 
+    'allauth.socialaccount.providers.google',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+SITE_ID = 1
 
 LOGIN_URL = "/login/"
 
@@ -59,9 +82,11 @@ LOGOUT_URL = "/logout/"
 
 LOGOUT_REDIRECT_URL = "/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-MEDIA_URL  = "/media/"
+MEDIA_URL = "/media/"
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -79,7 +104,7 @@ ROOT_URLCONF = "taskrabbit.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -94,6 +119,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "taskrabbit.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'offline',
+        }
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -157,20 +200,29 @@ EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 DEFAULT_FROM_EMAIL = "Task Rabbit <noreply@taskrabbit.com>"
 
-FIREBASE_ADMIN_CREDENTIALS_DICT = {
-  "type": os.getenv("FIREBASE_ACCOUNT_TYPE"), 
-  "project_id": os.getenv("FIREBASE_PROJECT_ID"),
-  "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
-  "private_key": os.getenv("FIREBASE_PRIVATE_KEY"),
-  "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
-  "client_id": os.getenv("FIREBASE_CLIENT_ID"),
-  "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
-  "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
-  "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_CERT_URL"),
-  "client_x509_cert_url": os.getenv("FIREBAE_CLIENT_CERT_URL") 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv("CLOUD_NAME"),
+    'API_KEY': os.getenv("CLOUD_API_KEY"),
+    'API_SECRET': os.getenv("CLOUD_API_SECRET")
 }
 
-FIREBASE_ADMIN_CREDENTIALS_PATH = os.path.join(BASE_DIR, "config/firebase/task-rabbit-7d031-firebase-adminsdk-37zrj-63268dcbe9.json")
+FIREBASE_ADMIN_CREDENTIALS_DICT = {
+    "type": os.getenv("FIREBASE_ACCOUNT_TYPE"),
+    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("FIREBASE_PRIVATE_KEY"),
+    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+    "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+    "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": os.getenv("FIREBAE_CLIENT_CERT_URL"),
+}
+
+FIREBASE_ADMIN_CREDENTIALS_PATH = os.path.join(
+    BASE_DIR,
+    "config/firebase/task-rabbit-7d031-firebase-adminsdk-37zrj-63268dcbe9.json",
+)
 
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 
@@ -179,3 +231,13 @@ STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 MAPS_API_KEY = os.getenv("MAPS_API_KEY")
 
 DISTANCE_MATRIX_API_KEY = os.getenv("DISTANCE_MATRIX_API_KEY")
+
+PAYPAL_MODE = os.getenv("PAYPAL_MODE")
+
+PAYPAL_SANDBOX_ACCOUNT = os.getenv("PAYPAL_SANDBOX_ACCOUNT")
+
+PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
+
+PAYPAL_APP_SECRET_KEY = os.getenv("PAYPAL_APP_SECRET_KEY")
+
+NOTIFICATIONS_URL = 'https://fb65-197-210-29-255.eu.ngrok.io'

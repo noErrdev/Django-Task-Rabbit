@@ -16,14 +16,14 @@ from .forms import (
     JobDeliveryForm,
 )
 
-from core.models import Job, Transaction
+from core.models import Courier, Job, Transaction
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
-from firebase_admin import credentials, auth
+from firebase_admin import credentials, auth, messaging
 
 if settings.DEBUG == True:
     cred = credentials.Certificate(settings.FIREBASE_ADMIN_CREDENTIALS_PATH)
@@ -218,6 +218,31 @@ def customer_create_job(request):
                     )
                     created_jobs.status = Job.PROCESSING
                     created_jobs.save()
+
+                    # send push notification
+                    couriers = Courier.objects.all()
+                    registration_tokens = [i.fcm_token for i in couriers if i.fcm_token]
+
+                    message = messaging.MulticastMessage(
+                        notification=messaging.Notification(
+                            title=created_jobs.name,
+                            body=created_jobs.description,
+                        ),
+                        webpush=messaging.WebpushConfig(
+                            notification=messaging.WebpushNotification(
+                                icon=created_jobs.photo.url
+                            ),
+                            fcm_options=messaging.WebpushFCMOptions(
+                                link=settings.NOTIFICATIONS_URL + reverse('courier:available_jobs'),
+                            )
+                        ),
+                        tokens=registration_tokens
+                    )
+
+                    response = messaging.send_multicast(message)
+
+                    print('{0} messages were sent out successfully'.format(response.success.count))
+
                     return redirect(reverse("customer:home"))
                 except stripe.error.CardError as e:
                     err = e.error

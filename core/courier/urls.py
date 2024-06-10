@@ -10,7 +10,7 @@ from .views import (
     courier_archived_jobs,
     courier_payment_method,
 )
-from .apis import courier_available_jobs_api, courier_current_job_update_api
+from .apis import courier_available_jobs_api, courier_current_job_update_api, courier_fcm_token_update_api
 
 app_name = "courier"
 
@@ -24,14 +24,19 @@ urlpatterns = [
     path("jobs/archived/", courier_archived_jobs, name="archived_jobs"),
     path("jobs/<str:pk>/", courier_available_job, name="available_job_details"),
     path(
-        "jobs/current/<str:pk>/camera",
+        "jobs/current/<str:pk>/camera/",
         courier_current_job_camera,
         name="current_job_camera",
     ),
     path("api/jobs/", courier_available_jobs_api, name="available_jobs_api"),
     path(
-        "api/jobs/current/<str:pk>/update",
+        "api/jobs/current/<str:pk>/update/",
         courier_current_job_update_api,
         name="current_job_update_api",
+    ),
+    path(
+        "api/fcm-token/update/",
+        courier_fcm_token_update_api,
+        name="fcm_token_update_api",
     ),
 ]

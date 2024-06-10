@@ -1,23 +1,9 @@
 {% extends 'customer/base.html' %}
 {% load crispy_forms_tags %}
-{% load get_env %}
 
 
 {% block head %}
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
-        const firebaseConfig = {
-            apiKey: "{% get_env_var 'APIKEY' %}",
-            authDomain: "task-rabbit-7d031.firebaseapp.com",
-            projectId: "task-rabbit-7d031",
-            storageBucket: "task-rabbit-7d031.appspot.com",
-            messagingSenderId: "363527763746",
-            appId: "1:363527763746:web:9eeb354ecbdc1b238a177b"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-    </script>
+    {% include 'partials/_firebase-app.html' %}
 {% endblock head %}
 
 {% block title %}
@@ -75,99 +61,5 @@
             </div>
         </div>
     </div>
-
-    <script type="module">
-        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js"; 
-        
-        const get_otp_code_block = document.querySelector('#get-otp-code')
-        const set_otp_code_block = document.querySelector('#set-otp-code')
-        const get_otp_btn = document.querySelector('#get-otp-code button')
-        const set_otp_btn = document.querySelector('#set-otp-code button')
-        const get_phone_no = document.querySelector('#get-otp-code input')
-        const get_otp_code = document.querySelector('#set-otp-code input')
-        const change_phone_number = document.querySelector('#change-phone')
-        const change_phone_numbe_btn = document.querySelector('#change-phone button')
-
-        const auth = getAuth();
-        
-        const onVerify = (idToken) => {
-            let form = document.createElement('form')
-            form.method = "POST"
-
-            let input_1 = document.createElement("input")
-            input_1.classList.add('form-control')
-            input_1.name = "id_token";
-            input_1.value = idToken
-            form.appendChild(input_1)
-            
-            let input_2 = document.createElement("input")
-            input_2.name = "action";
-            input_2.value = "update_phone"
-            form.appendChild(input_2)
-            
-            let input_3 = document.createElement("input")
-            input_3.name = "csrfmiddlewaretoken";
-            input_3.value = "{{ csrf_token }}"
-            form.appendChild(input_3)
-
-            document.body.appendChild(form);
-            form.submit()
-        }
-
-        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', 
-            {
-                'size': 'invisible',
-            }, 
-            auth
-        );
-
-
-        if (get_otp_code_block !== null) {
-            if (get_otp_btn !== null) {
-                get_otp_btn.addEventListener('click', () => {
-                    if (get_phone_no !== null) {
-                        const phoneNumber = get_phone_no.value
-                        console.log(phoneNumber)
-                        const appVerifier = window.recaptchaVerifier;
-                        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-                            .then((confirmationResult) => {
-                            window.confirmationResult = confirmationResult;
-                            get_otp_code_block.classList.add('d-none')
-                            set_otp_code_block.classList.remove('d-none')
-                        }).catch((error) => {
-                            console.log(error)
-                        });
-                        
-                    }
-                })
-            }
-        }
-        
-        if (set_otp_code_block !== null) {
-            set_otp_btn?.addEventListener('click', () => {
-                if (get_otp_code !== null) {
-                    const code = get_otp_code.value
-                    confirmationResult.confirm(code).then((result) => {
-                        const user = result.user;
-                        user.getIdToken().then((idToken) => {
-                            onVerify(idToken)
-                        })
-                    }).catch((error) => {
-                        console.log(error)
-                    });
-                } else {
-                    console.log('error')
-                }
-            })
-        }
-
-        if (change_phone_number !== null) {
-            if (change_phone_numbe_btn !== null) {
-                change_phone_numbe_btn.addEventListener('click', () => {
-                    change_phone_number.classList.add('d-none')
-                    get_otp_code_block.classList.remove('d-none')
-                })
-            }
-        }
-    </script>
+    {% include 'partials/_firebase-auth.html' %}
 {% endblock  %}

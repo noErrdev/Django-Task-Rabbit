@@ -1,5 +1,35 @@
 {% extends 'base.html' %}
+{% load socialaccount %}
 {% load crispy_forms_tags %}
+
+{% block head %}
+    <style>
+        .btn-google {
+            color: #545454;
+            background-color: #ffffff;
+            box-shadow: 0 1px 2px 1px #ddd;
+        }
+
+        .or-container {
+            align-items: center;
+            color: #ccc;
+            display: flex;
+            margin: 25px 0;
+        }
+
+        .line-separator {
+            background-color: #ccc;
+            flex-grow: 5;
+            height: 1px;
+        }
+
+        .or-label {
+            flex-grow: 1;
+            margin: 0 15px;
+            text-align: center;
+        }
+    </style>
+{% endblock head %}
 
 {% block title %}
     <title> 
@@ -14,6 +44,7 @@
 {% endblock title %}
 
 {% block content %}
+
     <div class="container-fluid mt-5">
         <div class="row justify-content-center">
             <div class="col-lg-4">
@@ -35,6 +66,15 @@
                                 <a href="{% url 'sign_up' %}?next={{ request.GET.next }}">Sign Up</a>
                             </p>
                         </form>
+                        <div class="or-container"><div class="line-separator"></div> <div class="or-label">or</div><div class="line-separator"></div></div>
+                        <div class="text-center">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a class="btn btn-lg btn-google btn-block btn-outline" href="{% provider_login_url 'google' %}">
+                                        <img style="width: 20px; height: 20px;" src="https://img.icons8.com/color/16/000000/google-logo.png"> <span style="font-size: 15px;">Login with Google</span></a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
